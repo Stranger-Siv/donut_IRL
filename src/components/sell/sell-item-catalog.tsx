@@ -183,13 +183,13 @@ export function SellItemCatalog() {
         <div className="space-y-3 rounded-2xl border border-white/10 bg-zinc-950/60 p-4">
           <div
             className={cn(
-              "flex flex-col gap-3 rounded-xl p-3 sm:flex-row sm:items-center sm:justify-between",
+              "flex flex-col gap-3 rounded-xl p-3",
               belowMinimum
                 ? "bg-rose-500/[0.04] ring-1 ring-rose-500/25"
                 : "ring-1 ring-white/[0.06]"
             )}
           >
-            <div className="min-w-0">
+            <div className="min-w-0 text-left">
               <p className="text-xs text-zinc-500">{qtyLabel}</p>
               {selected.kind === "CURRENCY" && (
                 <p className="text-[10px] text-zinc-600">Example: 10 = 10× 1M = 10M total.</p>
@@ -204,7 +204,7 @@ export function SellItemCatalog() {
                 <span className="text-zinc-600">(Admin → Settings)</span>
               </p>
             </div>
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex w-full items-center justify-start gap-1">
               <button
                 type="button"
                 onClick={() => step(-1)}

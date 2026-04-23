@@ -25,6 +25,8 @@ const config: Config = {
       animation: {
         "fade-up": "fadeUp 0.5s ease-out both",
         shimmer: "shimmer 2.2s ease-in-out infinite",
+        "cold-load": "coldLoad 14s ease-out forwards",
+        "soft-glow": "softGlow 3s ease-in-out infinite",
       },
       keyframes: {
         fadeUp: {
@@ -34,6 +36,14 @@ const config: Config = {
         shimmer: {
           "0%, 100%": { opacity: "0.4" },
           "50%": { opacity: "0.8" },
+        },
+        coldLoad: {
+          "0%": { transform: "scaleX(0.1)" },
+          "100%": { transform: "scaleX(0.9)" },
+        },
+        softGlow: {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
         },
       },
     },
