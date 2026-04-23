@@ -50,8 +50,9 @@ function useReducedMotion(): boolean {
 }
 
 /**
- * Full-screen cold start when the first health check is slow (e.g. Render sleeping).
- * One fetch, CSS animations, static tips — no heavy assets.
+ * Shown in the **browser** when the first `/api/health/db` check is slow (DB waking, etc.).
+ * The host’s “service waking / Render” interstitial is sent **before** your app can run — only
+ * upgrading, always-on instances, or keeping traffic up reduces that. One fetch, CSS, static tips.
  */
 export function ColdStartFullPage() {
   const reducedMotion = useReducedMotion();

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Donut — Connecting</title>
+    <!--
+      DEPLOY: Put this folder on any *always-up* static host (Render "Static Site",
+      Cloudflare Pages, GitHub Pages, S3+CloudFront). It is not served from this repo’s
+      Next app when the Web Service is cold.
+
+      1) Set the default app base URL below, OR use ?app=https://yourservice.onrender.com
+      2) Share the STATIC url as the main link so users never hit Render’s interstitial.
+    -->
+    <meta
+      name="app-default"
+      content="https://your-app.onrender.com"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #09090b;
+        color: #e4e4e7;
+      }
+      .glow {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 90% 50% at 50% 0%,
+          rgba(124, 58, 237, 0.18),
+          transparent 55%
+        );
+        z-index: 0;
+      }
+      .card {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 24rem;
+        text-align: center;
+      }
+      .icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin: 0 auto 1rem;
+        border-radius: 1rem;
+        display: grid;
+        place-content: center;
+        background: rgba(124, 58, 237, 0.2);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        font-size: 1.4rem;
+      }
+      h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.5rem;
+        color: #fafafa;
+      }
+      p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: #a1a1aa;
+        margin: 0 0 0.75rem;
+      }
+      .muted {
+        font-size: 0.75rem;
+        color: #71717a;
+        min-height: 2.5rem;
+        transition: opacity 0.4s ease;
+      }
+      .bar {
+        margin-top: 1.5rem;
+        height: 0.4rem;
+        width: 100%;
+        max-width: 12rem;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 9999px;
+        background: #27272a;
+        overflow: hidden;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        width: 40%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #7c3aed, #a855f7, #7c3aed);
+        background-size: 200% 100%;
+        animation: w 1.4s ease-in-out infinite;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bar > span {
+          animation: none;
+          width: 60%;
+        }
+      }
+      @keyframes w {
+        0% {
+          transform: translateX(-30%);
+        }
+        100% {
+          transform: translateX(190%);
+        }
+      }
+      a {
+        color: #c4b5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow" aria-hidden="true"></div>
+    <div class="card" role="status" aria-live="polite" aria-busy="true">
+      <div class="icon" aria-hidden="true">🍩</div>
+      <h1>Connecting to Donut</h1>
+      <p id="line1">Waking the app so this screen stays in our world — not the host’s generic loader.</p>
+      <p class="muted" id="line2" style="opacity: 0" aria-hidden="true"></p>
+      <p class="muted" id="err"></p>
+      <div class="bar" aria-hidden="true"><span></span></div>
+    </div>
+    <script>
+      (function () {
+        var p = new URLSearchParams(window.location.search);
+        var meta = document.querySelector('meta[name="app-default"]');
+        var raw = p.get("app") || (meta && (meta.getAttribute("content") || "")) || "";
+        var base = (raw || "").replace(/\/+$/, "");
+        var nextPath = p.get("next") || "/";
+        if (nextPath.charAt(0) !== "/") nextPath = "/" + nextPath;
+        if (!base || base.indexOf("http") !== 0) {
+          document.getElementById("line1").textContent =
+            "Set the app base URL: edit meta app-default in this file, or use ?app=https://yourservice.onrender.com";
+          return;
+        }
+        if (base.indexOf("your-app.onrender.com") >= 0) {
+          document.getElementById("line1").textContent =
+            "Replace the placeholder in meta app-default (or use ?app=) with your real Web Service URL.";
+          return;
+        }
+        var line2 = document.getElementById("line2");
+        var errEl = document.getElementById("err");
+        var WARMING_AFTER_MS = 5000;
+        setTimeout(function () {
+          line2.style.opacity = "1";
+          line2.textContent = "If the app was asleep, the first check can take a minute — we keep retrying.";
+          line2.setAttribute("aria-hidden", "false");
+        }, WARMING_AFTER_MS);
+
+        var url = base + "/api/health/db";
+        var t = 2000;
+        var attempt = 0;
+        function tryOnce() {
+          attempt += 1;
+          errEl.textContent = "";
+          fetch(url, { method: "GET", mode: "cors", cache: "no-store" })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                return { ok: r.ok && j && j.ok === true, status: r.status, j: j };
+              });
+            })
+            .then(function (x) {
+              if (x.ok) {
+                window.location.replace(base + nextPath);
+                return;
+              }
+              errEl.textContent =
+                "Not ready yet (HTTP " + x.status + "). Retry " + attempt + "…";
+            })
+            .catch(function () {
+              errEl.textContent =
+                "Can’t reach the app yet. Retry " + attempt + "… (network or still waking)";
+            });
+        }
+        tryOnce();
+        setInterval(tryOnce, t);
+      })();
+    </script>
+  </body>
+</html>
