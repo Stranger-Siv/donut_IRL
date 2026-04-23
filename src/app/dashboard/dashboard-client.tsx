@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { formatInr } from "@/lib/utils";
 import { VOLUME_M_GOLD, VOLUME_M_DIAMOND } from "@/lib/constants";
-import { Bell, Home, Link2, PlusCircle, Trophy } from "lucide-react";
+import { Bell, Home, Link2, PlusCircle, Trophy, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
@@ -19,6 +19,7 @@ type Me = {
   totalSoldInr: number;
   referralCode: string;
   discordLinked?: boolean;
+  inGameName?: string;
 };
 
 type Order = {
@@ -57,6 +58,9 @@ export function DashboardClient() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [alert1m, setAlert1m] = useState("");
   const [boot, setBoot] = useState(true);
+  const [ignDraft, setIgnDraft] = useState("");
+  const [ignEditing, setIgnEditing] = useState(false);
+  const [savingIgn, setSavingIgn] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -80,6 +84,39 @@ export function DashboardClient() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const inGameName = (me?.inGameName || "").trim();
+  useEffect(() => {
+    if (!ignEditing) {
+      setIgnDraft(inGameName);
+    }
+  }, [inGameName, ignEditing]);
+
+  const hasSavedIgn = Boolean(inGameName);
+  const showIgnInput = !hasSavedIgn || ignEditing;
+
+  async function saveIgn() {
+    setSavingIgn(true);
+    try {
+      const r = await fetch("/api/user/me", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ inGameName: ignDraft.trim() }),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || "Could not save");
+      }
+      toast.success("In-game name saved");
+      setIgnEditing(false);
+      void load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not save");
+    } finally {
+      setSavingIgn(false);
+    }
+  }
 
   async function addAlert(itemSlug: string, target: number) {
     const res = await fetch("/api/user/alerts", {
@@ -196,6 +233,75 @@ export function DashboardClient() {
           <strong className="text-zinc-200">Discord:</strong>{" "}
           {me?.discordLinked ? "Linked (manage in a future settings page)." : "Not linked — coming soon in account settings."}
         </p>
+      </div>
+
+      <div className="card-glow space-y-3 text-sm text-zinc-400">
+        <div className="flex items-center gap-2 text-zinc-200">
+          <UserCircle className="h-4 w-4 text-cyan-300/90" />
+          <span className="font-medium">In-game name (RuneScape)</span>
+        </div>
+        <p className="text-xs text-zinc-500">
+          Used for ops and referral deliveries. Same value as on the{" "}
+          <Link href="/referrals" className="text-violet-400 hover:underline">
+            Referrals
+          </Link>{" "}
+          page.
+        </p>
+        {!showIgnInput && hasSavedIgn && (
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2.5">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-emerald-200/80">Current in-game name</p>
+            <p className="mt-0.5 font-mono text-base font-semibold text-zinc-100">{inGameName}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setIgnEditing(true);
+                setIgnDraft(inGameName);
+              }}
+              className="mt-2 text-sm font-medium text-violet-300 hover:text-violet-200 hover:underline"
+            >
+              Change in-game name
+            </button>
+          </div>
+        )}
+        {showIgnInput && (
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-zinc-500" htmlFor="dashboard-ign">
+              {hasSavedIgn ? "New in-game name" : "In-game name"}
+            </label>
+            <input
+              id="dashboard-ign"
+              type="text"
+              autoComplete="nickname"
+              maxLength={80}
+              value={ignDraft}
+              onChange={(e) => setIgnDraft(e.target.value)}
+              placeholder="e.g. MyMain"
+              className="input-field"
+            />
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => void saveIgn()}
+                disabled={savingIgn}
+                className="min-h-11 min-w-0 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-sm font-medium text-violet-200 hover:bg-violet-500/20 disabled:opacity-50 sm:min-h-0"
+              >
+                {savingIgn ? "Saving…" : hasSavedIgn ? "Save new name" : "Save in-game name"}
+              </button>
+              {hasSavedIgn && ignEditing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIgnEditing(false);
+                    setIgnDraft(inGameName);
+                  }}
+                  className="min-h-11 rounded-lg border border-white/10 px-3 py-1.5 text-sm text-zinc-400 hover:bg-white/5 sm:min-h-0"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="card-glow">

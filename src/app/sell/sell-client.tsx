@@ -12,7 +12,7 @@ import {
   type ItemRow,
 } from "@/store/sell-calc";
 import { SellItemCatalog } from "@/components/sell/sell-item-catalog";
-import { Wallet, Shield, ChevronRight, UserPlus, UserCircle } from "lucide-react";
+import { Wallet, Shield, ChevronRight, UserPlus } from "lucide-react";
 import { cn, formatInrDecimal } from "@/lib/utils";
 import { SellPageSkeleton } from "@/components/ui/skeleton";
 import { inrToApproxEur, inrToApproxUsd } from "@/lib/currency-fx";
@@ -41,11 +41,6 @@ export function SellClient() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [referral, setReferral] = useState("");
   const [loading, setLoading] = useState(false);
-  /** RuneScape in-game name (same field as Referrals / PATCH /api/user/me). */
-  const [inGameName, setInGameName] = useState("");
-  const [ignDraft, setIgnDraft] = useState("");
-  const [ignEditing, setIgnEditing] = useState(false);
-  const [savingIgn, setSavingIgn] = useState(false);
   const [displayFx, setDisplayFx] = useState<{ inrPerUsd: number; inrPerEur: number } | null>(null);
   const [storeReady, setStoreReady] = useState(false);
 
@@ -92,20 +87,18 @@ export function SellClient() {
     /* Tier + rate: always prefer /api/user/me (DB + volume) — JWT can stay stale (e.g. still STANDARD). */
     if (sessionStatus === "unauthenticated") {
       setUserSellerTier(null);
-      setInGameName("");
     } else if (sessionStatus === "authenticated" && session) {
       const m = await fetch("/api/user/me", {
         cache: "no-store",
         credentials: "include",
       }).catch(() => null);
       if (m?.ok) {
-        const u = (await m.json()) as { sellerTier?: string; inGameName?: string };
+        const u = (await m.json()) as { sellerTier?: string };
         if (u.sellerTier) {
           setUserSellerTier(u.sellerTier as "STANDARD" | "GOLD" | "DIAMOND");
         } else {
           setUserSellerTier(null);
         }
-        setInGameName((u.inGameName || "").trim());
       } else if (session.user?.sellerTier) {
         setUserSellerTier(session.user.sellerTier);
       } else {
@@ -120,44 +113,6 @@ export function SellClient() {
   useEffect(() => {
     void load();
   }, [load, sessionStatus]);
-
-  useEffect(() => {
-    if (!ignEditing) {
-      setIgnDraft(inGameName);
-    }
-  }, [inGameName, ignEditing]);
-
-  const savedIgn = inGameName;
-  const hasSavedIgn = Boolean(savedIgn.trim());
-  const showIgnInput = !hasSavedIgn || ignEditing;
-
-  async function saveIgn() {
-    setSavingIgn(true);
-    try {
-      const r = await fetch("/api/user/me", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ inGameName: ignDraft.trim() }),
-      });
-      if (!r.ok) {
-        const j = (await r.json().catch(() => ({}))) as { error?: string };
-        throw new Error(j.error || "Could not save");
-      }
-      const saved = (await r.json().catch(() => ({}))) as { inGameName?: string };
-      if (typeof saved.inGameName === "string") {
-        setInGameName(saved.inGameName);
-        setIgnDraft(saved.inGameName);
-      }
-      toast.success("In-game name saved");
-      setIgnEditing(false);
-      void load();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not save");
-    } finally {
-      setSavingIgn(false);
-    }
-  }
 
   const estimate = useMemo(
     () =>
@@ -321,79 +276,6 @@ export function SellClient() {
           checkout (guest) or you can use your existing seller account.
         </p>
       </div>
-
-      {sessionStatus === "authenticated" && (
-        <div className="card-glow space-y-3 text-sm text-zinc-400">
-          <div className="flex items-center gap-2 text-zinc-200">
-            <UserCircle className="h-4 w-4 text-cyan-300/90" />
-            <span className="font-medium">In-game name (RuneScape)</span>
-          </div>
-          <p className="text-xs text-zinc-500">
-            Used for ops and referral deliveries. Same value as on the{" "}
-            <Link href="/referrals" className="text-violet-400 hover:underline">
-              Referrals
-            </Link>{" "}
-            page.
-          </p>
-          {!showIgnInput && hasSavedIgn && (
-            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2.5">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-emerald-200/80">
-                Current in-game name
-              </p>
-              <p className="mt-0.5 font-mono text-base font-semibold text-zinc-100">{savedIgn}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setIgnEditing(true);
-                  setIgnDraft(inGameName);
-                }}
-                className="mt-2 text-sm font-medium text-violet-300 hover:text-violet-200 hover:underline"
-              >
-                Change in-game name
-              </button>
-            </div>
-          )}
-          {showIgnInput && (
-            <div className="space-y-2">
-              <label className="block text-xs font-medium text-zinc-500" htmlFor="sell-ign">
-                {hasSavedIgn ? "New in-game name" : "In-game name"}
-              </label>
-              <input
-                id="sell-ign"
-                type="text"
-                autoComplete="nickname"
-                maxLength={80}
-                value={ignDraft}
-                onChange={(e) => setIgnDraft(e.target.value)}
-                placeholder="e.g. MyMain"
-                className="input-field"
-              />
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => void saveIgn()}
-                  disabled={savingIgn}
-                  className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-sm font-medium text-violet-200 hover:bg-violet-500/20 disabled:opacity-50"
-                >
-                  {savingIgn ? "Saving…" : hasSavedIgn ? "Save new name" : "Save in-game name"}
-                </button>
-                {hasSavedIgn && ignEditing && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIgnEditing(false);
-                      setIgnDraft(inGameName);
-                    }}
-                    className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-zinc-400 hover:bg-white/5"
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       <ol className="flex flex-wrap gap-1.5 text-[11px] text-zinc-500 sm:gap-2 sm:text-xs" aria-label="Steps">
         {[1, 2, 3].map((n) => (
