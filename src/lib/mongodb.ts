@@ -21,13 +21,20 @@ export async function connectDB(): Promise<typeof mongoose> {
     return globalForMongoose.mongoose.conn;
   }
   if (!globalForMongoose.mongoose.promise) {
-    globalForMongoose.mongoose.promise = mongoose.connect(MONGODB_URI, {
-      bufferCommands: false,
-      /* Atlas + slow cold starts (e.g. first request on a host) */
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 20_000,
-      connectTimeoutMS: 20_000,
-    });
+    /* Clear cache on failure so a fixed MONGODB_URI or Atlas rules can work without full process restart. */
+    globalForMongoose.mongoose.promise = mongoose
+      .connect(MONGODB_URI, {
+        bufferCommands: false,
+        /* Atlas + slow cold starts (e.g. first request on a host) */
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 20_000,
+        connectTimeoutMS: 20_000,
+      })
+      .catch((err) => {
+        globalForMongoose.mongoose.promise = null;
+        globalForMongoose.mongoose.conn = null;
+        throw err;
+      });
   }
   globalForMongoose.mongoose.conn = await globalForMongoose.mongoose.promise;
   return globalForMongoose.mongoose.conn;
