@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { SellClient } from "./sell-client";
+import { SellPageSkeleton } from "@/components/ui/skeleton";
 
 export const metadata = {
   title: "Sell",
@@ -7,7 +8,7 @@ export const metadata = {
 };
 
 function SellFallback() {
-  return <p className="text-sm text-zinc-500">Loading…</p>;
+  return <SellPageSkeleton />;
 }
 
 export default function SellPage() {

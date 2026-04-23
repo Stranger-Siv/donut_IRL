@@ -14,6 +14,7 @@ import {
 import { SellItemCatalog } from "@/components/sell/sell-item-catalog";
 import { Wallet, Shield, ChevronRight, UserPlus, UserCircle } from "lucide-react";
 import { cn, formatInrDecimal } from "@/lib/utils";
+import { SellPageSkeleton } from "@/components/ui/skeleton";
 import { inrToApproxEur, inrToApproxUsd } from "@/lib/currency-fx";
 
 type Step = 1 | 2 | 3;
@@ -46,6 +47,7 @@ export function SellClient() {
   const [ignEditing, setIgnEditing] = useState(false);
   const [savingIgn, setSavingIgn] = useState(false);
   const [displayFx, setDisplayFx] = useState<{ inrPerUsd: number; inrPerEur: number } | null>(null);
+  const [storeReady, setStoreReady] = useState(false);
 
   useEffect(() => {
     const r = searchParams?.get("ref")?.trim();
@@ -55,6 +57,7 @@ export function SellClient() {
   }, [searchParams]);
 
   const load = useCallback(async () => {
+    try {
     const pRes = await fetch("/api/prices");
     if (!pRes.ok) return;
     const data = (await pRes.json()) as {
@@ -108,6 +111,9 @@ export function SellClient() {
       } else {
         setUserSellerTier(null);
       }
+    }
+    } finally {
+      setStoreReady(true);
     }
   }, [session, sessionStatus, setCatalog, setUserSellerTier]);
 
@@ -301,6 +307,10 @@ export function SellClient() {
 
   const needsAccount = !session || session.user.role !== "USER";
   const showAccountFields = needsAccount && step === 3;
+
+  if (sessionStatus === "loading" || !storeReady) {
+    return <SellPageSkeleton />;
+  }
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-3xl space-y-6 sm:space-y-8">

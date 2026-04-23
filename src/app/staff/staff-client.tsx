@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { formatInr } from "@/lib/utils";
+import { StaffPageSkeleton } from "@/components/ui/skeleton";
 
 type Order = {
   _id: string;
@@ -15,15 +16,25 @@ type Order = {
 
 export function StaffClient() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/staff/orders");
-    if (res.ok) setOrders((await res.json()) as Order[]);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/staff/orders");
+      if (res.ok) setOrders((await res.json()) as Order[]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  if (loading) {
+    return <StaffPageSkeleton />;
+  }
 
   return (
     <div className="w-full min-w-0 space-y-6">

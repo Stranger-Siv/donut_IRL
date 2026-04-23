@@ -8,6 +8,7 @@ import { formatInr } from "@/lib/utils";
 import { VOLUME_M_GOLD, VOLUME_M_DIAMOND } from "@/lib/constants";
 import { Bell, Home, Link2, PlusCircle, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
 type Me = {
   sellerTier: string;
@@ -55,20 +56,25 @@ export function DashboardClient() {
   const [noti, setNoti] = useState<Noti[]>([]);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [alert1m, setAlert1m] = useState("");
+  const [boot, setBoot] = useState(true);
 
   const load = useCallback(async () => {
-    const [m, o, r, n, w] = await Promise.all([
-      fetch("/api/user/me"),
-      fetch("/api/orders"),
-      fetch("/api/referrals", { cache: "no-store" }),
-      fetch("/api/user/notifications"),
-      fetch("/api/user/wallet"),
-    ]);
-    if (m.ok) setMe((await m.json()) as Me);
-    if (o.ok) setOrders((await o.json()) as Order[]);
-    if (r.ok) setRef((await r.json()) as Ref);
-    if (n.ok) setNoti((await n.json()) as Noti[]);
-    if (w.ok) setWallet((await w.json()) as Wallet);
+    try {
+      const [m, o, r, n, w] = await Promise.all([
+        fetch("/api/user/me"),
+        fetch("/api/orders"),
+        fetch("/api/referrals", { cache: "no-store" }),
+        fetch("/api/user/notifications"),
+        fetch("/api/user/wallet"),
+      ]);
+      if (m.ok) setMe((await m.json()) as Me);
+      if (o.ok) setOrders((await o.json()) as Order[]);
+      if (r.ok) setRef((await r.json()) as Ref);
+      if (n.ok) setNoti((await n.json()) as Noti[]);
+      if (w.ok) setWallet((await w.json()) as Wallet);
+    } finally {
+      setBoot(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -93,6 +99,10 @@ export function DashboardClient() {
     session?.user?.name?.trim()?.split(/\s+/)[0] ||
     session?.user?.email?.split("@")[0] ||
     "there";
+
+  if (boot) {
+    return <DashboardPageSkeleton />;
+  }
 
   return (
     <div className="w-full min-w-0 space-y-8 sm:space-y-10">

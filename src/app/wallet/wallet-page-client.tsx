@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatInr } from "@/lib/utils";
 import { toast } from "sonner";
 import { Wallet, ArrowLeft } from "lucide-react";
+import { WalletPageSkeleton } from "@/components/ui/skeleton";
 
 type WalletData = {
   totalCompletedInr: number;
@@ -38,7 +39,7 @@ export function WalletPageClient() {
   }, [load]);
 
   if (loading) {
-    return <p className="text-sm text-zinc-500">Loading…</p>;
+    return <WalletPageSkeleton />;
   }
   if (!data) {
     return (

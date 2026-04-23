@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { formatInr } from "@/lib/utils";
 import { AdminPageHeader, TableShell } from "../ui";
+import { AdminTableSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 type Row = {
@@ -166,7 +167,12 @@ export function AdminOrdersPage() {
         </button>
       </div>
 
-      <TableShell>
+      {loading ? (
+        <div className="min-w-0 max-w-full">
+          <AdminTableSkeleton rows={10} cols={6} />
+        </div>
+      ) : (
+        <TableShell>
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-white/5 text-xs uppercase tracking-wide text-zinc-500">
             <tr>
@@ -183,14 +189,7 @@ export function AdminOrdersPage() {
             </tr>
           </thead>
           <tbody className="text-zinc-300">
-            {loading ? (
-              <tr>
-                <td colSpan={10} className="p-8 text-center text-zinc-500">
-                  Loading…
-                </td>
-              </tr>
-            ) : (
-              rows.map((o) => (
+            {rows.map((o) => (
                 <tr key={o._id} className="border-t border-white/5">
                   <td className="p-2 font-mono text-xs text-violet-300/90">
                     {o._id.slice(-8)}
@@ -250,11 +249,11 @@ export function AdminOrdersPage() {
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
+              ))}
           </tbody>
         </table>
-      </TableShell>
+        </TableShell>
+      )}
     </div>
   );
 }

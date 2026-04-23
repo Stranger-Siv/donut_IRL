@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Copy, Gift, Link2, MessageCircle, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { INELIGIBILITY_EXPLANATION_FALLBACK } from "@/lib/referral-ineligible";
+import { ReferralsPageSkeleton } from "@/components/ui/skeleton";
 import { REFERRAL_VOLUME_THRESHOLD_M } from "@/lib/constants";
 
 function isIneligibleStatus(st: string | undefined) {
@@ -163,6 +164,10 @@ export function ReferralsClient() {
   const code = ref?.referralCode;
   const inviteLink = shareUrlForCode(code);
 
+  if (loading) {
+    return <ReferralsPageSkeleton />;
+  }
+
   return (
     <div className="w-full min-w-0 space-y-6 sm:space-y-8">
       <div>
@@ -172,9 +177,7 @@ export function ReferralsClient() {
         </p>
       </div>
 
-      {loading && <p className="text-sm text-zinc-500">Loading…</p>}
-
-      {!loading && !ref && <p className="text-sm text-zinc-500">Could not load referral data.</p>}
+      {!ref && <p className="text-sm text-zinc-500">Could not load referral data.</p>}
 
       {ref && (
         <>

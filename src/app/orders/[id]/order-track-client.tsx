@@ -8,6 +8,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { OrderViewResponse } from "@/lib/order-response";
 import { OrderThread } from "@/components/orders/order-thread";
+import { OrderDetailSkeleton } from "@/components/ui/skeleton";
 
 const steps = [
   "PENDING",
@@ -33,18 +34,24 @@ export function OrderTrackClient({
 }) {
   const { data: s } = useSession();
   const [o, setO] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<StaffPick[]>([]);
   const [aid, setAid] = useState("");
   const [status, setStatus] = useState("PENDING");
   const [loadTick, setLoadTick] = useState(0);
 
   const load = useCallback(async () => {
-    const res = await fetch(`/api/orders/${id}`);
-    if (!res.ok) {
-      setO(null);
-      return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${id}`);
+      if (!res.ok) {
+        setO(null);
+        return;
+      }
+      setO((await res.json()) as Order);
+    } finally {
+      setLoading(false);
     }
-    setO((await res.json()) as Order);
   }, [id]);
 
   const onOrderEvent = useCallback((next: Order) => {
@@ -139,8 +146,15 @@ export function OrderTrackClient({
     setLoadTick((n) => n + 1);
   }
 
+  if (loading) {
+    return <OrderDetailSkeleton />;
+  }
   if (!o) {
-    return <p className="text-sm text-zinc-500">Loading or no access…</p>;
+    return (
+      <p className="text-sm text-zinc-500">
+        Couldn&apos;t load this order, or you don&apos;t have access.
+      </p>
+    );
   }
 
   const isSeller = s?.user?.id === o.userId;

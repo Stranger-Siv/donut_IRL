@@ -13,6 +13,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { cn } from "@/lib/utils";
+import { ColdStartNotice } from "@/components/layout/cold-start-notice";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -85,6 +86,7 @@ export default async function RootLayout({
         <div className="pointer-events-none fixed inset-0 bg-noise" aria-hidden />
         <AppProviders>
           <div className="relative z-10 flex min-h-dvh flex-col">
+            <ColdStartNotice />
             <ShowUnlessAdmin>
               <Navbar />
             </ShowUnlessAdmin>
