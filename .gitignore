@@ -20,6 +20,10 @@
 .DS_Store
 *.pem
 
+# User-uploaded order chat images (keep folder via public/uploads/.gitkeep)
+public/uploads/**
+!public/uploads/.gitkeep
+
 # debug
 npm-debug.log*
 yarn-debug.log*

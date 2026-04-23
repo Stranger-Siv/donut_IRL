@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Donut Exchange
 
-## Getting Started
+Next.js 14 (App Router) marketplace for **buying in-game items from users for real money** (INR). Dark, responsive UI; MongoDB; NextAuth; role-based admin/staff/seller tools.
 
-First, run the development server:
+## Stack
+
+- **Framework:** Next.js, TypeScript, Tailwind CSS  
+- **Data:** MongoDB + Mongoose  
+- **Auth:** NextAuth (credentials + JWT)  
+- **Charts:** Recharts (admin)  
+- **State:** Zustand (sell calculator)  
+- **Toasts:** Sonner  
+
+## Quick start
+
+1. **Copy environment**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Set `MONGODB_URI` (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)), `NEXTAUTH_URL` (e.g. `http://localhost:3000`), and a long random `NEXTAUTH_SECRET`.
+
+   **Fastest local DB (Docker):** from the project root run `docker compose up -d` — MongoDB will listen on `127.0.0.1:27017`, matching the default `MONGODB_URI` in `.env.example`. Then you can **register and log in**.
+
+2. **Install and seed (optional demo data)**
+
+   ```bash
+   npm install
+   npm run seed
+   ```
+
+   Demo logins (password for all: `password123`):
+
+   - `admin@demo.local` — admin  
+   - `staff@demo.local` — staff  
+   - `seller@demo.local` — seller  
+
+3. **Run**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Sanity check (optional, matches CI / production)**
+
+   ```bash
+   npm run build && npm start
+   ```
+
+### If you see `ECONNREFUSED 127.0.0.1:27017` or `/api/prices` failed
+
+That means **MongoDB is not running** or **`MONGODB_URI` is wrong**:
+
+- **Local MongoDB:** install MongoDB Community and start the service (`brew services start mongodb-community` on macOS), or run `mongod` so something listens on port **27017**.
+- **Cloud:** create a free cluster on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas), copy the connection string, and set `MONGODB_URI` in `.env.local`.
+
+Without a database, **login, register, orders, and admin** will not work (NextAuth still needs user storage). The app can still render the **homepage** and **sell UI** with empty rates; after the latest changes, `/api/prices` returns `[]` instead of 500 when the DB is down.
+
+**Other log noise (optional):**
+
+- `GET /apple-touch-icon.png` **404** — harmless; browsers request it; add `public/apple-touch-icon.png` if you want to silence it.
+- `npm audit` **high severity** — dependency advisories; review with `npm audit` (only use `npm audit fix --force` if you accept possible breaking upgrades).
+
+4. **Discord (optional)**  
+   Set `DISCORD_WEBHOOK_URL` for trade/rate/promo messages. `INTERNAL_DISCORD_KEY` can authorize automation to `POST /api/webhooks/discord`.
+
+## Routes
+
+| Path        | Description              |
+|------------|---------------------------|
+| `/`         | Home, live rates, public feed & stats |
+| `/sell`     | Calculator + sell order   |
+| `/dashboard` | Seller dashboard, referrals, price alerts |
+| `/orders/[id]` | Order tracking (role-aware) |
+| `/admin`    | Stats, pricing, users, analytics, Discord promo |
+| `/staff`    | Assigned orders only     |
+| `/login` · `/register` | Auth         |
+
+## Deploy (Vercel, recommended)
+
+This app is a standard **Next.js 14** Node server (`next start`). Vercel detects it and runs the build automatically.
+
+1. **Push the repo to GitHub** (or GitLab / Bitbucket). Never commit `.env.local`; keep secrets in the host’s UI.
+2. **Create a Vercel project** → Import the repository → leave defaults: **Build:** `next build`, **Output:** (none / default), **Install:** `npm install`, **Node:** 20.x is fine.
+3. **Set environment variables** in Vercel → Project → **Settings** → **Environment variables** (Production, and Preview if you want PR previews to work with auth):
+
+| Variable | Notes |
+|----------|--------|
+| `MONGODB_URI` | Atlas connection string, or your managed Mongo URL. |
+| `NEXTAUTH_URL` | **Exact** public origin, e.g. `https://your-app.vercel.app` (no trailing slash issues are mostly OK; use the real domain when you add one). |
+| `NEXTAUTH_SECRET` | Long random string (e.g. `openssl rand -base64 32`). |
+| `NEXT_PUBLIC_APP_URL` | Same as public site URL; used in emails and links. |
+| `DISCORD_WEBHOOK_URL` | Optional. |
+| `INTERNAL_DISCORD_KEY` | Optional; for `POST /api/webhooks/discord`. |
+| `RESEND_API_KEY` or SMTP\* + `EMAIL_FROM` | Optional; needed for password reset email in production. |
+
+4. **MongoDB Atlas (if used):** In **Network Access**, allow the IPs that can reach the cluster. For Vercel’s dynamic IPs, many teams use **`0.0.0.0/0`** (tighten later with a private link or a fixed egress if you have that). Ensure the DB user has read/write on the right database.
+5. **First deploy** → Redeploy after changing env vars if the first build ran without them.
+6. **Smoke test:** open `/`, `/login`, and an authenticated route; confirm `NEXTAUTH_URL` matches the browser’s origin or cookie/session issues may appear.
+
+**CLI (optional):** With [Vercel CLI](https://vercel.com/docs/cli) installed and logged in:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For production: `npx vercel --prod` after setting env in the dashboard or pulling them with `vercel env pull` for local use only (do not commit).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Not Vercel:** Any Node host that runs `npm run build` and `npm start` with the same environment variables and a compatible Node version (18+) can run the app. Docker is not required; `docker compose` in the repo is only for **local** MongoDB.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Profit / analytics:** “earned” uses a 10% placeholder of payout for demo metrics; adjust in `recordCompletedOrder` and admin stats if you track real margin.
 
-## Learn More
+## Project layout
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/app` — App Router pages and `api/**`  
+- `src/components` — UI (home, layout, providers)  
+- `src/models` — Mongoose schemas  
+- `src/lib` — DB, auth, analytics, Discord, referrals  
+- `scripts/seed.ts` — demo database seed  

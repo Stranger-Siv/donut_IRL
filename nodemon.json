@@ -1,0 +1,10 @@
+{
+  "watch": ["src", "public", "next.config.mjs", "tailwind.config.ts", "postcss.config.mjs", "tsconfig.json"],
+  "ext": "ts,tsx,js,mjs,cjs,css,json",
+  "ignore": [".next", "node_modules", "**/*.test.ts", "**/*.test.tsx", "coverage", ".git"],
+  "exec": "next dev",
+  "delay": 500,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

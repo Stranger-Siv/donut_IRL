@@ -2,26 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply min-h-screen antialiased;
+  @apply text-zinc-200 bg-zinc-950;
+  @apply font-sans;
+  background-size: 100% 100%, auto;
+  background-attachment: fixed;
+}
+
+@layer base {
+  ::selection {
+    @apply bg-violet-500/30 text-zinc-100;
+  }
+}
+
+@layer components {
+  .card-glow {
+    @apply rounded-2xl border border-white/10 bg-zinc-900/60 p-4 shadow-card backdrop-blur-sm;
+  }
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.2em] text-violet-400/90;
+  }
+}
+
+@keyframes admin-drawer-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0.96;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @layer utilities {
+  .admin-drawer-in {
+    animation: admin-drawer-in 0.2s ease-out;
+  }
   .text-balance {
     text-wrap: balance;
+  }
+  .pb-nav {
+    @apply pb-20 sm:pb-0;
+  }
+  .focus-brand {
+    @apply outline-none ring-offset-2 ring-offset-zinc-950 focus-visible:ring-2 focus-visible:ring-violet-500/70;
   }
 }

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Donut">
+  <circle cx="16" cy="16" r="12" fill="#1e0b2e" />
+  <circle cx="16" cy="16" r="5" fill="#7c3aed" />
+  <path
+    d="M16 4a12 12 0 0 0-1 0v5a1 1 0 0 0 1 0 1 1 0 0 0 1-1V4.1A12 12 0 0 0 16 4Z"
+    fill="#c4b5fd"
+  />
+</svg>
