@@ -113,41 +113,53 @@ export function AdminReferralsPage() {
               No pending in-game payouts — either nothing is REWARDED yet, or everything is already marked paid.
             </p>
           ) : (
-            <div className="mt-3 overflow-x-auto">
-              <table className="w-full min-w-[720px] text-left text-sm">
-                <thead className="text-[11px] font-medium uppercase text-zinc-500">
+            <div className="mt-3 w-full min-w-0 max-w-full overflow-x-hidden">
+              <table className="w-full min-w-0 table-fixed text-left text-[10px] sm:text-sm">
+                <thead className="text-[9px] font-medium uppercase text-zinc-500 sm:text-[11px]">
                   <tr>
-                    <th className="p-2">Referrer (login)</th>
-                    <th className="p-2">Referrer IGN</th>
-                    <th className="p-2">Referred (login)</th>
-                    <th className="p-2">Referred IG</th>
-                    <th className="p-2">Code</th>
-                    <th className="p-2">M</th>
-                    <th className="p-2">Action</th>
+                    <th className="w-[16%] p-1.5 sm:p-2">Ref. login</th>
+                    <th className="w-[10%] p-1.5 sm:p-2">Ref. IGN</th>
+                    <th className="w-[16%] p-1.5 sm:p-2">Referred</th>
+                    <th className="w-[10%] p-1.5 sm:p-2">Ref. IG</th>
+                    <th className="w-[8%] p-1.5 sm:p-2">Code</th>
+                    <th className="w-[5%] p-1.5 sm:p-2">M</th>
+                    <th className="w-[15%] p-1.5 sm:p-2">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.payoutsPending.map((r) => (
                     <tr key={r._id} className="border-t border-white/10 text-zinc-300">
-                      <td className="p-2 text-xs text-zinc-400">{r.referrerEmail ?? "—"}</td>
-                      <td className="p-2 font-mono text-xs text-emerald-200/90">
-                        {r.referrerInGameName?.trim() || "— not set —"}
+                      <td className="min-w-0 max-w-0 p-1.5 sm:p-2">
+                        <span className="line-clamp-2 break-all text-xs text-zinc-400" title={r.referrerEmail ?? ""}>
+                          {r.referrerEmail ?? "—"}
+                        </span>
                       </td>
-                      <td className="p-2 text-xs text-zinc-400">{r.referredEmail ?? "—"}</td>
-                      <td className="p-2 font-mono text-xs text-zinc-500">
+                      <td className="min-w-0 p-1.5 font-mono text-[10px] text-emerald-200/90 sm:p-2 sm:text-xs">
+                        <span className="line-clamp-2 break-words">
+                          {r.referrerInGameName?.trim() || "— not set —"}
+                        </span>
+                      </td>
+                      <td className="min-w-0 max-w-0 p-1.5 sm:p-2">
+                        <span className="line-clamp-2 break-all text-xs text-zinc-400" title={r.referredEmail ?? ""}>
+                          {r.referredEmail ?? "—"}
+                        </span>
+                      </td>
+                      <td className="min-w-0 p-1.5 font-mono text-[10px] text-zinc-500 sm:p-2 sm:text-xs">
                         {r.referredInGameName?.trim() || "—"}
                       </td>
-                      <td className="p-2 font-mono text-[11px] text-zinc-500">{r.code}</td>
-                      <td className="p-2 font-mono text-xs text-zinc-400">
+                      <td className="min-w-0 p-1.5 font-mono text-[10px] text-zinc-500 sm:p-2 sm:text-[11px]">
+                        {r.code}
+                      </td>
+                      <td className="min-w-0 p-1.5 font-mono text-xs text-zinc-400 sm:p-2">
                         {r.rewardMillionIg ?? "5"}M
                       </td>
-                      <td className="p-2">
+                      <td className="min-w-0 p-1.5 sm:p-2">
                         <button
                           type="button"
                           onClick={() => void act(r._id, "mark_referrer_payout_delivered")}
-                          className="rounded bg-emerald-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-emerald-500"
+                          className="w-full min-w-0 rounded bg-emerald-600 px-1.5 py-1 text-[9px] font-medium text-white hover:bg-emerald-500 sm:px-2.5 sm:text-[11px]"
                         >
-                          Mark paid in-game
+                          Mark paid
                         </button>
                       </td>
                     </tr>
@@ -196,32 +208,44 @@ export function AdminReferralsPage() {
       )}
 
       <TableShell>
-        <table className="w-full min-w-[1000px] text-left text-sm">
-          <thead className="text-xs text-zinc-500">
+        <table className="w-full min-w-0 table-fixed text-left text-[10px] sm:text-sm">
+          <thead className="text-zinc-500 sm:text-xs">
             <tr>
-              <th className="p-2">Code</th>
-              <th className="p-2">Referrer</th>
-              <th className="p-2">Ref. IG</th>
-              <th className="p-2">Referred</th>
-              <th className="p-2">Progress M</th>
-              <th className="p-2">Status</th>
-              <th className="p-2 min-w-[280px] max-w-md">Ineligible (why)</th>
-              <th className="p-2">Payout</th>
-              <th className="p-2">Actions</th>
+              <th className="w-[6%] p-1.5 sm:p-2">Code</th>
+              <th className="w-[10%] p-1.5 sm:p-2">Referrer</th>
+              <th className="w-[8%] p-1.5 sm:p-2">IG</th>
+              <th className="w-[10%] p-1.5 sm:p-2">Referred</th>
+              <th className="w-[5%] p-1.5 sm:p-2">M</th>
+              <th className="w-[7%] p-1.5 sm:p-2">St</th>
+              <th className="w-[32%] p-1.5 sm:p-2">Ineligible (why)</th>
+              <th className="w-[6%] p-1.5 sm:p-2">$</th>
+              <th className="w-[16%] p-1.5 sm:p-2">Act</th>
             </tr>
           </thead>
           <tbody>
             {data?.items.map((r) => (
               <tr key={r._id} className="border-t border-white/5 text-zinc-300">
-                <td className="p-2 font-mono text-xs">{r.code}</td>
-                <td className="p-2 text-xs">{r.referrerEmail}</td>
-                <td className="p-2 font-mono text-[11px] text-zinc-500">
-                  {r.referrerInGameName?.trim() || "—"}
+                <td className="min-w-0 p-1.5 font-mono text-[9px] sm:p-2 sm:text-xs">{r.code}</td>
+                <td className="min-w-0 max-w-0 p-1.5 sm:p-2">
+                  <span className="line-clamp-2 break-all text-[10px] sm:text-xs" title={r.referrerEmail}>
+                    {r.referrerEmail}
+                  </span>
                 </td>
-                <td className="p-2 text-xs">{r.referredEmail}</td>
-                <td className="p-2 font-mono text-xs">{r.progressVolumeM}</td>
-                <td className="p-2 text-xs">{r.status}</td>
-                <td className="p-2 align-top text-[11px] leading-relaxed text-zinc-400">
+                <td className="min-w-0 max-w-0 p-1.5 font-mono text-[9px] text-zinc-500 sm:p-2 sm:text-[11px]">
+                  <span className="line-clamp-2 break-words" title={r.referrerInGameName ?? ""}>
+                    {r.referrerInGameName?.trim() || "—"}
+                  </span>
+                </td>
+                <td className="min-w-0 max-w-0 p-1.5 sm:p-2">
+                  <span className="line-clamp-2 break-all text-[10px] sm:text-xs" title={r.referredEmail}>
+                    {r.referredEmail}
+                  </span>
+                </td>
+                <td className="min-w-0 p-1.5 font-mono text-[9px] sm:p-2 sm:text-xs">
+                  {r.progressVolumeM}
+                </td>
+                <td className="min-w-0 p-1.5 text-[9px] sm:p-2 sm:text-xs">{r.status}</td>
+                <td className="min-w-0 max-w-0 p-1.5 align-top text-[9px] leading-relaxed text-zinc-400 sm:p-2 sm:text-[11px]">
                   {r.status === "INELIGIBLE" ? (
                     <div className="space-y-1.5">
                       <p>
@@ -247,19 +271,19 @@ export function AdminReferralsPage() {
                     <span className="text-zinc-600">—</span>
                   )}
                 </td>
-                <td className="p-2 text-[10px] text-zinc-500">
+                <td className="min-w-0 p-1.5 text-[9px] text-zinc-500 sm:p-2 sm:text-[10px]">
                   {r.status === "REWARDED" && r.referrerPayoutDeliveredAt ? (
                     <span className="text-emerald-500/90" title={r.referrerPayoutDeliveredAt}>
                       Paid
                     </span>
                   ) : r.status === "REWARDED" ? (
-                    <span className="text-amber-500/80">Pending</span>
+                    <span className="text-amber-500/80">Pend</span>
                   ) : (
                     "—"
                   )}
                 </td>
-                <td className="p-2">
-                  <div className="flex flex-wrap gap-1">
+                <td className="min-w-0 p-1.5 sm:p-2">
+                  <div className="flex min-w-0 flex-wrap gap-0.5 sm:gap-1">
                     <button
                       type="button"
                       className="text-[10px] text-emerald-400"

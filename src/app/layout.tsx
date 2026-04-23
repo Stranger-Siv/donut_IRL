@@ -69,12 +69,13 @@ export default async function RootLayout({
   }
   const pathname = getRequestPathname();
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark max-w-[100%] overflow-x-clip">
       <body
         className={cn(
           outfit.variable,
           jetbrains.variable,
-          "min-h-dvh font-sans",
+          "min-h-dvh min-w-0 max-w-[100%] font-sans",
+          "overflow-x-clip",
           "bg-grid-fade"
         )}
         // If /_next/static/css/* 404s (stale .next, dev HMR), Tailwind is missing but HTML still renders
@@ -85,7 +86,7 @@ export default async function RootLayout({
       >
         <div className="pointer-events-none fixed inset-0 bg-noise" aria-hidden />
         <AppProviders>
-          <div className="relative z-10 flex min-h-dvh flex-col">
+          <div className="relative z-10 flex min-h-dvh w-full min-w-0 max-w-full flex-col overflow-x-clip">
             <ColdStartNotice />
             <ShowUnlessAdmin>
               <Navbar />

@@ -31,26 +31,36 @@ export function AdminPayoutsPage() {
         desc="UPI, bank, and crypto rails — reference IDs, timing, and stuck states from orders."
       />
       <TableShell>
-        <table className="w-full min-w-[800px] text-left text-sm">
-          <thead className="text-xs text-zinc-500">
+        <table className="w-full min-w-0 table-fixed text-left text-xs sm:text-sm">
+          <thead className="text-[10px] text-zinc-500 sm:text-xs">
             <tr>
-              <th className="p-2">Order</th>
-              <th className="p-2">User</th>
-              <th className="p-2">Amount</th>
-              <th className="p-2">Method</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Ref</th>
+              <th className="w-[10%] p-1.5 sm:p-2">Order</th>
+              <th className="w-[24%] p-1.5 sm:p-2">User</th>
+              <th className="w-[12%] p-1.5 sm:p-2">Amount</th>
+              <th className="w-[10%] p-1.5 sm:p-2">Method</th>
+              <th className="w-[12%] p-1.5 sm:p-2">Status</th>
+              <th className="w-[32%] p-1.5 sm:p-2">Ref</th>
             </tr>
           </thead>
           <tbody className="text-zinc-300">
             {rows.map((o) => (
               <tr key={o._id} className="border-t border-white/5">
-                <td className="p-2 font-mono text-xs">{o._id.slice(-8)}</td>
-                <td className="p-2 text-xs">{o.userEmail}</td>
-                <td className="p-2 font-mono text-violet-200">{formatInr(o.amount)}</td>
-                <td className="p-2 text-xs">{o.method}</td>
-                <td className="p-2 text-xs">{o.status}</td>
-                <td className="p-2 text-[10px] text-zinc-500">{o.reference || "—"}</td>
+                <td className="min-w-0 p-1.5 font-mono text-[10px] sm:p-2 sm:text-xs">{o._id.slice(-8)}</td>
+                <td className="min-w-0 max-w-0 p-1.5 sm:p-2">
+                  <span className="line-clamp-2 break-all text-[10px] sm:text-xs" title={o.userEmail}>
+                    {o.userEmail}
+                  </span>
+                </td>
+                <td className="min-w-0 p-1.5 font-mono text-[10px] text-violet-200 sm:p-2 sm:text-xs">
+                  {formatInr(o.amount)}
+                </td>
+                <td className="min-w-0 p-1.5 text-[10px] sm:p-2 sm:text-xs">{o.method}</td>
+                <td className="min-w-0 p-1.5 text-[10px] sm:p-2 sm:text-xs">{o.status}</td>
+                <td className="min-w-0 max-w-0 p-1.5 text-[9px] text-zinc-500 sm:p-2 sm:text-[10px]">
+                  <span className="line-clamp-2 break-all" title={o.reference}>
+                    {o.reference || "—"}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>

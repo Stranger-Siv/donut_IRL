@@ -153,7 +153,7 @@ function AdminNavDrawer({ open, onClose, pathname, titleId }: DrawerProps) {
       <aside
         id="admin-mobile-drawer"
         className={cn(
-          "admin-drawer-in absolute left-0 top-0 flex h-dvh w-[min(20rem,calc(100vw-1rem))] max-w-[min(20rem,100vw-1rem)] flex-col",
+          "admin-drawer-in absolute left-0 top-0 flex h-dvh w-[min(20rem,100%)] max-w-full flex-col",
           "border-r border-white/10 bg-zinc-950 shadow-2xl"
         )}
       >
@@ -200,7 +200,7 @@ export function AdminMobileNav({ pathname }: { pathname: string }) {
     <>
       <header
         data-admin-mobile-header
-        className="sticky top-0 z-40 flex h-14 min-h-14 shrink-0 items-center gap-2 border-b border-white/5 bg-zinc-950/90 px-2 backdrop-blur-xl supports-[backdrop-filter]:bg-zinc-950/80 sm:gap-3 sm:px-3 lg:hidden"
+        className="sticky top-0 z-40 flex h-14 min-h-14 w-full min-w-0 max-w-full shrink-0 items-center gap-2 overflow-x-clip border-b border-white/5 bg-zinc-950/90 px-2 backdrop-blur-xl supports-[backdrop-filter]:bg-zinc-950/80 sm:gap-3 sm:px-3 lg:hidden"
       >
         <button
           type="button"

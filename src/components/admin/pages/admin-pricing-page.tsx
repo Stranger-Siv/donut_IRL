@@ -351,27 +351,29 @@ export function AdminPricingPage() {
       </div>
 
       <TableShell>
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-white/5 text-xs text-zinc-500">
+        <table className="w-full min-w-0 table-fixed text-left text-xs sm:text-sm">
+          <thead className="border-b border-white/5 text-[10px] text-zinc-500 sm:text-xs">
             <tr>
-              <th className="p-3">Name</th>
-              <th className="p-3">Kind</th>
-              <th className="p-3">₹ (ref. / fixed)</th>
-              <th className="p-3">M per unit</th>
-              <th className="p-3">Internal ID</th>
-              <th className="p-3">Active</th>
-              <th className="p-3">Save</th>
+              <th className="w-[22%] p-1.5 sm:p-2">Name</th>
+              <th className="w-[10%] p-1.5 sm:p-2">Kind</th>
+              <th className="w-[12%] p-1.5 sm:p-2">₹</th>
+              <th className="w-[8%] p-1.5 sm:p-2">M/u</th>
+              <th className="w-[20%] p-1.5 sm:p-2">Internal ID</th>
+              <th className="w-[8%] p-1.5 sm:p-2">Active</th>
+              <th className="w-[8%] p-1.5 sm:p-2">Save</th>
             </tr>
           </thead>
           <tbody>
             {prices.map((p) => (
               <tr key={p._id} className="border-t border-white/5">
-                <td className="p-2 text-zinc-200">{p.itemName}</td>
-                <td className="p-2 text-xs">Money (1M)</td>
-                <td className="p-2">
+                <td className="min-w-0 max-w-0 p-1.5 text-zinc-200 sm:p-2">
+                  <span className="line-clamp-2 break-words">{p.itemName}</span>
+                </td>
+                <td className="min-w-0 p-1.5 text-[10px] sm:p-2 sm:text-xs">1M</td>
+                <td className="min-w-0 p-1.5 sm:p-2">
                   <input
                     type="number"
-                    className="w-24 rounded border border-white/10 bg-zinc-950 px-1.5 py-1 font-mono text-xs"
+                    className="w-full min-w-0 max-w-full rounded border border-white/10 bg-zinc-950 px-1 py-1 font-mono text-[10px] sm:max-w-[5.5rem] sm:text-xs"
                     defaultValue={p.currentPrice}
                     id={`pr-${p._id}`}
                     onBlur={(e) => {
@@ -380,13 +382,16 @@ export function AdminPricingPage() {
                     }}
                   />
                 </td>
-                <td className="p-2 font-mono text-xs text-zinc-500">
+                <td className="min-w-0 p-1.5 font-mono text-[10px] text-zinc-500 sm:p-2 sm:text-xs">
                   {p.equivalentMPerUnit ?? "—"}
                 </td>
-                <td className="p-2 font-mono text-[10px] text-zinc-500" title="Same as &quot;slug&quot; in code">
-                  {p.itemSlug}
+                <td
+                  className="min-w-0 max-w-0 p-1.5 font-mono text-[9px] text-zinc-500 sm:p-2 sm:text-[10px]"
+                  title="Same as &quot;slug&quot; in code"
+                >
+                  <span className="line-clamp-2 break-all">{p.itemSlug}</span>
                 </td>
-                <td className="p-2">
+                <td className="min-w-0 p-1.5 sm:p-2">
                   <button
                     type="button"
                     onClick={() => void toggle(p._id, p.active)}
@@ -395,14 +400,14 @@ export function AdminPricingPage() {
                     {p.active ? "on" : "off"}
                   </button>
                 </td>
-                <td className="p-2">
+                <td className="min-w-0 p-1.5 sm:p-2">
                   <button
                     type="button"
                     onClick={() => {
                       const el = document.getElementById(`pr-${p._id}`) as HTMLInputElement;
                       if (el) void savePrice(p._id, parseFloat(el.value));
                     }}
-                    className="text-xs text-violet-300 hover:underline"
+                    className="text-[10px] text-violet-300 hover:underline sm:text-xs"
                   >
                     Save
                   </button>

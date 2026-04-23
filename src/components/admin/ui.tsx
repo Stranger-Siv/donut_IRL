@@ -76,13 +76,11 @@ export function TableShell({
   return (
     <div
       className={cn(
-        "w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/40",
+        "w-full min-w-0 max-w-full overflow-x-clip rounded-2xl border border-white/5 bg-zinc-900/40",
         className
       )}
     >
-      <div className="max-w-full touch-pan-x overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-        {children}
-      </div>
+      <div className="w-full min-w-0 max-w-full overflow-x-clip">{children}</div>
     </div>
   );
 }

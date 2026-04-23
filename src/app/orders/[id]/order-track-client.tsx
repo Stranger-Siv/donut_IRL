@@ -326,7 +326,7 @@ export function OrderTrackClient({
       )}
 
       {isAdmin && (
-        <div className="card-glow space-y-3 overflow-x-auto text-sm [-webkit-overflow-scrolling:touch]">
+        <div className="card-glow w-full min-w-0 max-w-full space-y-3 overflow-x-hidden text-sm">
           <h2 className="font-medium">Admin</h2>
           <div className="flex min-w-0 flex-wrap items-end gap-2">
             <div className="space-y-1">

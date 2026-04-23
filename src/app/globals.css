@@ -4,12 +4,18 @@
 
 html {
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   @apply min-h-screen antialiased;
   @apply text-zinc-200 bg-zinc-950;
   @apply font-sans;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
   background-size: 100% 100%, auto;
   background-attachment: fixed;
 }
