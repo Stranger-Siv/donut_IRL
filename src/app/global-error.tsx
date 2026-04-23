@@ -17,7 +17,10 @@ export default function GlobalError({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-dvh bg-zinc-950 font-sans text-zinc-100 antialiased">
+      <body
+        className="min-h-dvh bg-zinc-950 font-sans text-zinc-100 antialiased"
+        style={{ backgroundColor: "rgb(9 9 11)", color: "rgb(244 244 245)" }}
+      >
         <div className="mx-auto max-w-md px-4 py-20 text-center">
           <h1 className="text-lg font-semibold">Something went wrong</h1>
           <p className="mt-2 break-words text-sm text-zinc-500">{error.message}</p>

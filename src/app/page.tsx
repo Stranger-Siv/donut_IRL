@@ -45,15 +45,15 @@ export default async function Home() {
   const { tierRates, items, feed, totalPaid, totalTrades, avgPayoutTimeMinutes } = data;
 
   return (
-    <div className="space-y-12 sm:space-y-16">
+    <div className="space-y-10 sm:space-y-12 md:space-y-16">
       {signedIn ? <HeroSignedIn displayName={welcomeName} /> : <HeroSection />}
 
-      <p className="mx-auto max-w-2xl text-center text-xs leading-relaxed text-zinc-500">
+      <p className="mx-auto max-w-2xl text-balance px-0.5 text-center text-xs leading-relaxed text-zinc-500 sm:px-0">
         <span className="text-zinc-400">Tier</span> = lifetime volume: Gold from {data.thresholdsM.goldAt}M, Diamond
         from {data.thresholdsM.diamondAt}M. Volume is counted in 1M (millions) of in-game money.
       </p>
 
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
         <LiveRatesBoard tierRates={tierRates} items={items} />
         <RecentTradesFeed
           items={feed.map((f) => ({
@@ -73,7 +73,7 @@ export default async function Home() {
         />
       </section>
 
-      <div className="card-glow flex flex-col items-center justify-center gap-3 border border-violet-500/20 py-8 text-center sm:py-10">
+      <div className="card-glow flex flex-col items-center justify-center gap-3 border border-violet-500/20 px-1 py-8 text-center sm:px-4 sm:py-10">
         {signedIn ? (
           <>
             <p className="text-lg font-medium text-zinc-100">Ready to sell?</p>

@@ -101,6 +101,7 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
 export function AdminSidebar({ pathname }: { pathname: string }) {
   return (
     <aside
+      data-admin-desktop-nav
       className="fixed left-0 top-0 z-30 hidden h-dvh w-64 min-w-64 max-w-[min(16rem,100%)] flex-col border-r border-white/5 bg-zinc-950/95 shadow-[4px_0_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl lg:flex"
       aria-label="Admin navigation"
     >
@@ -197,7 +198,10 @@ export function AdminMobileNav({ pathname }: { pathname: string }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-14 min-h-14 shrink-0 items-center gap-2 border-b border-white/5 bg-zinc-950/90 px-2 backdrop-blur-xl supports-[backdrop-filter]:bg-zinc-950/80 sm:gap-3 sm:px-3 lg:hidden">
+      <header
+        data-admin-mobile-header
+        className="sticky top-0 z-40 flex h-14 min-h-14 shrink-0 items-center gap-2 border-b border-white/5 bg-zinc-950/90 px-2 backdrop-blur-xl supports-[backdrop-filter]:bg-zinc-950/80 sm:gap-3 sm:px-3 lg:hidden"
+      >
         <button
           type="button"
           onClick={() => setOpen(true)}

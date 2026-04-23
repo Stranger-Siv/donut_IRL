@@ -10,10 +10,14 @@ export function AdminPageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
-      <div className="min-w-0">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-50 sm:text-2xl">{title}</h1>
-        {desc && <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 sm:mt-1">{desc}</p>}
+    <div className="mb-6 flex min-w-0 max-w-full flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
+      <div className="min-w-0 max-w-full">
+        <h1 className="text-balance text-xl font-semibold tracking-tight text-zinc-50 sm:text-2xl">
+          {title}
+        </h1>
+        {desc && (
+          <p className="mt-1.5 break-words text-sm leading-relaxed text-zinc-500 sm:mt-1">{desc}</p>
+        )}
       </div>
       {children && <div className="w-full min-w-0 sm:w-auto sm:shrink-0">{children}</div>}
     </div>
@@ -72,11 +76,13 @@ export function TableShell({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/40",
+        "w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/40",
         className
       )}
     >
-      <div className="overflow-x-auto">{children}</div>
+      <div className="max-w-full touch-pan-x overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+        {children}
+      </div>
     </div>
   );
 }

@@ -88,17 +88,17 @@ export function AdminOrdersPage() {
   }
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <AdminPageHeader
         title="Order management"
         desc="Filter, triage, and update pipeline statuses. High-value and sensitive orders surface here first."
       />
 
-      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-2xl border border-white/5 bg-zinc-900/30 p-4">
-        <label className="text-xs text-zinc-500">
+      <div className="mb-4 flex min-w-0 max-w-full flex-col flex-wrap items-stretch gap-3 rounded-2xl border border-white/5 bg-zinc-900/30 p-3 sm:flex-row sm:items-end sm:p-4">
+        <label className="w-full min-w-0 text-xs text-zinc-500 sm:w-auto">
           Status
           <select
-            className="mt-1 block rounded-lg border border-white/10 bg-zinc-950 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-white/10 bg-zinc-950 px-2 py-2 text-sm sm:max-w-[11rem] sm:py-1.5"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
@@ -109,10 +109,10 @@ export function AdminOrdersPage() {
             ))}
           </select>
         </label>
-        <label className="text-xs text-zinc-500">
+        <label className="w-full min-w-0 text-xs text-zinc-500 sm:w-auto">
           Item type
           <select
-            className="mt-1 block rounded-lg border border-white/10 bg-zinc-950 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-white/10 bg-zinc-950 px-2 py-2 text-sm sm:max-w-[10rem] sm:py-1.5"
             value={itemType}
             onChange={(e) => setItemType(e.target.value)}
           >
@@ -121,36 +121,37 @@ export function AdminOrdersPage() {
             <option value="ITEM">ITEM</option>
           </select>
         </label>
-        <label className="flex items-center gap-2 text-xs text-zinc-400">
+        <label className="flex w-full min-w-0 items-center gap-2 text-xs text-zinc-400 sm:w-auto">
           <input
             type="checkbox"
             checked={highValue}
             onChange={(e) => setHighValue(e.target.checked)}
+            className="shrink-0"
           />
-          High value (₹5k+)
+          <span className="min-w-0 break-words">High value (₹5k+)</span>
         </label>
-        <label className="text-xs text-zinc-500">
+        <label className="w-full min-w-0 text-xs text-zinc-500 sm:w-auto">
           From
           <input
             type="date"
-            className="mt-1 block rounded-lg border border-white/10 bg-zinc-950 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-white/10 bg-zinc-950 px-2 py-2 text-sm sm:max-w-[11rem] sm:py-1.5"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
           />
         </label>
-        <label className="text-xs text-zinc-500">
+        <label className="w-full min-w-0 text-xs text-zinc-500 sm:w-auto">
           To
           <input
             type="date"
-            className="mt-1 block rounded-lg border border-white/10 bg-zinc-950 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full min-w-0 max-w-full rounded-lg border border-white/10 bg-zinc-950 px-2 py-2 text-sm sm:max-w-[11rem] sm:py-1.5"
             value={to}
             onChange={(e) => setTo(e.target.value)}
           />
         </label>
-        <label className="text-xs text-zinc-500">
+        <label className="w-full min-w-0 text-xs text-zinc-500 sm:w-auto">
           User ID
           <input
-            className="mt-1 block w-40 rounded-lg border border-white/10 bg-zinc-950 px-2 py-1.5 font-mono text-xs"
+            className="mt-1 block w-full min-w-0 rounded-lg border border-white/10 bg-zinc-950 px-2 py-2 font-mono text-xs sm:max-w-[10rem]"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             placeholder="Filter…"
@@ -159,7 +160,7 @@ export function AdminOrdersPage() {
         <button
           type="button"
           onClick={() => void load()}
-          className="rounded-lg bg-violet-600 px-3 py-2 text-sm"
+          className="min-h-10 w-full rounded-lg bg-violet-600 px-3 py-2 text-sm sm:w-auto"
         >
           Apply
         </button>

@@ -21,7 +21,7 @@ export function ConditionalMain({ children }: { children: React.ReactNode }) {
   return (
     <main
       className={cn(
-        "mx-auto w-full max-w-6xl flex-1 px-4 pb-nav pt-6 sm:px-6 sm:pt-8"
+        "mx-auto w-full min-w-0 max-w-6xl flex-1 px-3 pb-nav pt-5 sm:px-6 sm:pt-8"
       )}
     >
       {children}

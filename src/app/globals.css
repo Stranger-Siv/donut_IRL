@@ -27,6 +27,16 @@ body {
   .eyebrow {
     @apply text-xs font-medium uppercase tracking-[0.2em] text-violet-400/90;
   }
+  /**
+   * 16px+ on mobile prevents iOS zooming inputs on focus; sm:text-sm matches desktop scale.
+   */
+  .input-field {
+    @apply w-full min-w-0 min-h-11 rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2.5 text-base text-zinc-100 ring-offset-zinc-950 sm:text-sm;
+    @apply placeholder:text-zinc-600 focus:border-violet-500/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30;
+  }
+  .btn-primary {
+    @apply min-h-11 w-full rounded-lg bg-violet-600 px-3 py-2.5 text-base font-semibold text-white transition hover:bg-violet-500 disabled:opacity-50 sm:text-sm;
+  }
 }
 
 @keyframes admin-drawer-in {
@@ -48,7 +58,7 @@ body {
     text-wrap: balance;
   }
   .pb-nav {
-    @apply pb-20 sm:pb-0;
+    @apply pb-[max(5rem,env(safe-area-inset-bottom,0px))] sm:pb-0;
   }
   .focus-brand {
     @apply outline-none ring-offset-2 ring-offset-zinc-950 focus-visible:ring-2 focus-visible:ring-violet-500/70;

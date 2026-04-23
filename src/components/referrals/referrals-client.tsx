@@ -164,10 +164,10 @@ export function ReferralsClient() {
   const inviteLink = shareUrlForCode(code);
 
   return (
-    <div className="space-y-8">
+    <div className="w-full min-w-0 space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-50">Referrals</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <h1 className="text-balance text-xl font-semibold text-zinc-50 sm:text-2xl">Referrals</h1>
+        <p className="mt-1 text-sm leading-relaxed text-zinc-500">
           Share your personal link. When someone uses it, your code is applied for rewards (see below).
         </p>
       </div>
@@ -314,7 +314,7 @@ export function ReferralsClient() {
                   onChange={(e) => setIgnDraft(e.target.value)}
                   maxLength={80}
                   placeholder="e.g. MyMainName"
-                  className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none focus:ring-1 focus:ring-violet-500/30"
+                  className="input-field"
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:flex-wrap">
                   <button

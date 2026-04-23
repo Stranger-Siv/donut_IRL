@@ -149,9 +149,9 @@ export function OrderTrackClient({
   const stepIdx = steps.findIndex((x) => x === o.status);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold">Order</h1>
+        <h1 className="text-balance text-xl font-semibold sm:text-2xl">Order</h1>
         <p className="font-mono text-xs text-zinc-500">{o._id}</p>
       </div>
 
@@ -312,13 +312,13 @@ export function OrderTrackClient({
       )}
 
       {isAdmin && (
-        <div className="card-glow space-y-3 text-sm">
+        <div className="card-glow space-y-3 overflow-x-auto text-sm [-webkit-overflow-scrolling:touch]">
           <h2 className="font-medium">Admin</h2>
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex min-w-0 flex-wrap items-end gap-2">
             <div className="space-y-1">
               <span className="text-xs text-zinc-500">Assign to staff</span>
               <select
-                className="block rounded-md border border-white/10 bg-zinc-950/80 px-2 py-1"
+                className="block w-full min-w-0 max-w-full rounded-md border border-white/10 bg-zinc-950/80 px-2 py-2 text-sm sm:max-w-xs"
                 value={aid}
                 onChange={(e) => setAid(e.target.value)}
               >
@@ -332,7 +332,7 @@ export function OrderTrackClient({
             </div>
             <button
               type="button"
-              className="rounded-md bg-amber-600/80 px-2 py-1.5"
+              className="min-h-10 shrink-0 rounded-md bg-amber-600/80 px-3 py-2 text-sm"
               onClick={() => {
                 if (!aid) {
                   toast.error("Pick a staff or admin to assign");
@@ -348,7 +348,7 @@ export function OrderTrackClient({
             <div className="space-y-1">
               <span className="text-xs text-zinc-500">Set status</span>
               <select
-                className="block rounded-md border border-white/10 bg-zinc-950/80 px-2 py-1"
+                className="block w-full min-w-0 max-w-full rounded-md border border-white/10 bg-zinc-950/80 px-2 py-2 text-sm sm:max-w-xs"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
@@ -370,7 +370,7 @@ export function OrderTrackClient({
             </div>
             <button
               type="button"
-              className="rounded-md bg-violet-600 px-2 py-1.5"
+              className="min-h-10 shrink-0 rounded-md bg-violet-600 px-3 py-2 text-sm"
               onClick={() => void patch({ status })}
             >
               Apply status
@@ -379,7 +379,7 @@ export function OrderTrackClient({
           <div className="space-y-2 border-t border-white/5 pt-3">
             <p className="text-xs text-zinc-500">Public note to seller (dispute / under review)</p>
             <textarea
-              className="w-full rounded-md border border-white/10 bg-zinc-950/80 px-2 py-1.5 text-sm"
+              className="w-full min-w-0 rounded-md border border-white/10 bg-zinc-950/80 px-2 py-2 text-base sm:text-sm"
               rows={2}
               defaultValue={o.publicStaffNote}
               id="pub-note"

@@ -58,7 +58,7 @@ function Inner() {
   return (
     <form onSubmit={onSubmit} className="card-glow space-y-4">
       <p className="text-sm text-zinc-400">Choose a new password for your account.</p>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="pw1">
           New password
         </label>
@@ -68,12 +68,12 @@ function Inner() {
           required
           autoComplete="new-password"
           minLength={8}
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="pw2">
           Confirm new password
         </label>
@@ -83,16 +83,12 @@ function Inner() {
           required
           autoComplete="new-password"
           minLength={8}
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={password2}
           onChange={(e) => setPassword2(e.target.value)}
         />
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn-primary disabled:cursor-not-allowed">
         {loading ? "…" : "Update password"}
       </button>
       <p className="text-center text-sm text-zinc-500">

@@ -86,7 +86,7 @@ function Inner({
   }
 
   return (
-    <form onSubmit={onSubmit} className="card-glow space-y-4">
+    <form onSubmit={onSubmit} className="card-glow space-y-4 sm:space-y-5">
       {refParam && referrerName && (
         <p
           className="rounded-lg border border-violet-500/30 bg-violet-950/50 px-3 py-2 text-sm text-violet-100"
@@ -105,7 +105,7 @@ function Inner({
           account.
         </p>
       )}
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="name">
           Display name
         </label>
@@ -113,12 +113,12 @@ function Inner({
           id="name"
           type="text"
           required
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="reg-email">
           Email
         </label>
@@ -126,12 +126,12 @@ function Inner({
           id="reg-email"
           type="email"
           required
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="reg-pw">
           Password
         </label>
@@ -140,28 +140,24 @@ function Inner({
           type="password"
           required
           minLength={8}
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="ref">
           Referral code (optional)
         </label>
         <input
           id="ref"
           type="text"
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 font-mono text-sm uppercase"
+          className="input-field font-mono text-sm sm:text-sm uppercase"
           value={referral}
           onChange={(e) => setReferral(e.target.value.toUpperCase())}
         />
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn-primary disabled:cursor-not-allowed">
         {loading ? "…" : "Create account"}
       </button>
       <p className="text-center text-sm text-zinc-500">

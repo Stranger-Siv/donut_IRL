@@ -76,6 +76,11 @@ export default async function RootLayout({
           "min-h-dvh font-sans",
           "bg-grid-fade"
         )}
+        // If /_next/static/css/* 404s (stale .next, dev HMR), Tailwind is missing but HTML still renders
+        style={{
+          backgroundColor: "rgb(9 9 11)",
+          color: "rgb(212 212 216)",
+        }}
       >
         <div className="pointer-events-none fixed inset-0 bg-noise" aria-hidden />
         <AppProviders>

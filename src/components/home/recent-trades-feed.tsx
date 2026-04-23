@@ -19,7 +19,7 @@ export function RecentTradesFeed({ items }: { items: Feed }) {
         {items.map((t) => (
           <li
             key={t.id}
-            className="card-glow border-dashed text-sm text-zinc-200"
+            className="card-glow break-words border-dashed text-sm text-zinc-200"
           >
             {t.line}
           </li>

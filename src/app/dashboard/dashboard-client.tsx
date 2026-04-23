@@ -95,10 +95,10 @@ export function DashboardClient() {
     "there";
 
   return (
-    <div className="space-y-10">
-      <div className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 via-zinc-950/30 to-zinc-950/90 px-5 py-6 sm:px-8 sm:py-8">
+    <div className="w-full min-w-0 space-y-8 sm:space-y-10">
+      <div className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 via-zinc-950/30 to-zinc-950/90 px-4 py-5 sm:px-8 sm:py-8">
         <p className="text-xs font-medium uppercase tracking-widest text-violet-400/90">Your seller hub</p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl">
+        <h1 className="mt-2 text-balance text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl">
           Hi, {firstName}
         </h1>
         <p className="mt-1 max-w-lg text-sm text-zinc-400">
@@ -215,17 +215,17 @@ export function DashboardClient() {
       <div className="card-glow space-y-3">
         <h2 className="text-sm font-medium text-zinc-200">Price alerts</h2>
         <p className="text-xs text-zinc-500">Notify when our buy price per 1M reaches or exceeds your target.</p>
-        <div className="flex max-w-md gap-2">
+        <div className="flex w-full min-w-0 max-w-md flex-col gap-2 sm:flex-row sm:items-stretch">
           <input
             type="number"
             placeholder="Target / 1M (₹)"
-            className="min-w-0 flex-1 rounded-md border border-white/10 bg-zinc-950/80 px-2 py-1 text-sm"
+            className="input-field min-h-11 min-w-0 flex-1 [appearance:textfield] sm:max-w-xs [&::-webkit-inner-spin-button]:appearance-none"
             value={alert1m}
             onChange={(e) => setAlert1m(e.target.value)}
           />
           <button
             type="button"
-            className="rounded-md bg-violet-600/80 px-2 text-sm text-white"
+            className="min-h-11 shrink-0 rounded-md bg-violet-600/80 px-4 text-sm text-white sm:w-auto"
             onClick={() => {
               const t = parseFloat(alert1m);
               if (!t || t < 0) {

@@ -181,25 +181,25 @@ export function AdminPricingPage() {
   }
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <AdminPageHeader
         title="Live pricing"
         desc="We only buy 1M in-game money. Set tier ₹/1M, reference Diamond rate, and minimum order size."
       />
 
-      <div className="mb-6 card-glow max-w-3xl border-amber-500/20">
+      <div className="card-glow mb-6 w-full min-w-0 max-w-full border-amber-500/20 sm:max-w-3xl">
         <p className="text-sm font-semibold text-amber-100/95">Minimum order (sell page)</p>
         <p className="mt-1 text-xs text-zinc-500">
           Sellers cannot place an order below these. Applies to the public sell flow and the orders API.
         </p>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end">
-          <label className="text-xs text-zinc-500">
+          <label className="min-w-0 flex-1 text-xs text-zinc-500 sm:flex-initial">
             In-game money — minimum × 1M
             <input
               type="number"
               min={0.0001}
               step="any"
-              className="mt-1 block w-full min-w-[8rem] rounded border border-white/10 bg-zinc-950 px-2 py-1.5 sm:w-32"
+              className="mt-1 block w-full max-w-full rounded border border-white/10 bg-zinc-950 px-2 py-2 text-base sm:w-32 sm:py-1.5 sm:text-sm"
               value={minOrder.minSellQuantityM}
               onChange={(e) =>
                 setMinOrder((m) => ({
@@ -215,7 +215,7 @@ export function AdminPricingPage() {
           <button
             type="button"
             onClick={() => void saveMinOrder()}
-            className="rounded-lg bg-amber-600/90 px-4 py-2 text-sm text-white hover:bg-amber-500"
+            className="w-full min-h-11 shrink-0 rounded-lg bg-amber-600/90 px-4 py-2.5 text-sm text-white hover:bg-amber-500 sm:w-auto sm:min-h-0 sm:py-2"
           >
             Save minimums
           </button>
@@ -229,10 +229,10 @@ export function AdminPricingPage() {
         </p>
       </div>
 
-      <div className="mb-6 grid gap-4 lg:grid-cols-2">
-        <div className="card-glow">
+      <div className="mb-6 grid min-w-0 gap-4 lg:grid-cols-2">
+        <div className="card-glow min-w-0 max-w-full">
           <p className="text-sm font-medium text-zinc-200">INR per 1M in-game money (by seller tier)</p>
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="mt-1 break-words text-xs leading-relaxed text-zinc-500">
             Standard / Gold / Diamond: sellers earn these ₹/1M on <strong className="text-zinc-400">money</strong>{" "}
             orders. When you <strong className="text-zinc-400">save the 1M money catalog price</strong> (or bulk % on
             money), Diamond matches that line and <strong className="text-zinc-400">Standard and Gold move with
@@ -240,7 +240,7 @@ export function AdminPricingPage() {
             realigns Standard/Gold to those gaps again.
           </p>
           {tier && (
-            <div className="mt-3 flex flex-wrap gap-3">
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
               {(
                 [
                   ["standardRate", "Standard seller"],
@@ -248,12 +248,12 @@ export function AdminPricingPage() {
                   ["diamondRate", "Diamond seller"],
                 ] as const
               ).map(([k, label]) => (
-                <label key={k} className="text-xs text-zinc-500">
+                <label key={k} className="min-w-0 text-xs text-zinc-500 sm:shrink-0">
                   {label} — ₹ / 1M
                   <input
                     type="number"
                     step="0.01"
-                    className="mt-0.5 block w-24 rounded border border-white/10 bg-zinc-950 px-2 py-1.5"
+                    className="mt-0.5 block w-full min-w-0 max-w-full rounded border border-white/10 bg-zinc-950 px-2 py-2 text-base sm:max-w-[7rem] sm:py-1.5 sm:text-sm"
                     value={tier[k]}
                     onChange={(e) =>
                       setTier((t) => (t ? { ...t, [k]: parseFloat(e.target.value) } : t))
@@ -264,14 +264,14 @@ export function AdminPricingPage() {
               <button
                 type="button"
                 onClick={() => void saveTiers()}
-                className="self-end rounded-lg bg-amber-600/80 px-3 py-1.5 text-sm"
+                className="w-full min-h-11 rounded-lg bg-amber-600/80 px-3 py-2.5 text-sm sm:w-auto sm:min-h-0 sm:py-1.5"
               >
                 Save
               </button>
             </div>
           )}
         </div>
-        <div className="card-glow space-y-3">
+        <div className="card-glow min-w-0 max-w-full space-y-3">
           <p className="text-sm font-medium text-zinc-200">Global controls</p>
           <div className="flex flex-wrap gap-2">
             <button
@@ -308,7 +308,7 @@ export function AdminPricingPage() {
         </div>
       </div>
 
-      <div className="mb-4 card-glow max-w-3xl">
+      <div className="card-glow mb-4 w-full min-w-0 max-w-full sm:max-w-3xl">
         <p className="text-sm font-medium text-zinc-200">Add catalog line</p>
         {hasMoney ? (
           <p className="mt-2 text-sm text-zinc-400">The 1M money line is in the table below.</p>
@@ -351,7 +351,7 @@ export function AdminPricingPage() {
       </div>
 
       <TableShell>
-        <table className="w-full text-left text-sm">
+        <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-white/5 text-xs text-zinc-500">
             <tr>
               <th className="p-3">Name</th>

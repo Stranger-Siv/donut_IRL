@@ -38,7 +38,7 @@ function Inner() {
 
   return (
     <form onSubmit={onSubmit} className="card-glow space-y-4">
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="email">
           Email
         </label>
@@ -47,12 +47,12 @@ function Inner() {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="password">
           Password
         </label>
@@ -61,12 +61,12 @@ function Inner() {
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="totp">
           Authenticator code (6 digits, admins with 2FA)
         </label>
@@ -76,7 +76,7 @@ function Inner() {
           inputMode="numeric"
           autoComplete="one-time-code"
           placeholder="Only if 2FA is enabled"
-          className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+          className="input-field"
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/[^\d\s]/g, ""))}
         />
@@ -86,11 +86,7 @@ function Inner() {
           Forgot password?
         </Link>
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn-primary disabled:cursor-not-allowed">
         {loading ? "…" : "Log in"}
       </button>
       <p className="text-center text-sm text-zinc-500">

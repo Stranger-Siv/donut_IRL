@@ -52,18 +52,18 @@ export function WalletPageClient() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="w-full min-w-0 space-y-6 sm:space-y-8">
       <div>
         <Link
           href="/dashboard"
-          className="mb-3 inline-flex items-center gap-1 text-sm text-violet-400 hover:underline"
+          className="mb-3 inline-flex min-h-10 items-center gap-1 text-sm text-violet-400 hover:underline"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
           Dashboard
         </Link>
-        <div className="flex items-center gap-2 text-violet-300">
-          <Wallet className="h-5 w-5" />
-          <h1 className="text-2xl font-semibold text-zinc-100">Payouts &amp; balance</h1>
+        <div className="flex min-w-0 items-center gap-2 text-violet-300">
+          <Wallet className="h-5 w-5 shrink-0" />
+          <h1 className="text-balance text-xl font-semibold text-zinc-100 sm:text-2xl">Payouts &amp; balance</h1>
         </div>
         <p className="mt-1 text-sm text-zinc-500">
           Lifetime completed payouts, exposure from open orders, and recent history.

@@ -33,13 +33,13 @@ export function LiveRatesBoard({
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center">
+      <div className="grid grid-cols-3 gap-1.5 text-center sm:gap-2">
         {(["STANDARD", "GOLD", "DIAMOND"] as const).map((k) => (
           <div
             key={k}
-            className="card-glow flex flex-col gap-0.5 border border-white/10 py-2 text-xs sm:text-sm"
+            className="card-glow flex min-w-0 flex-col gap-0.5 border border-white/10 px-0.5 py-2 text-[10px] sm:px-1 sm:text-sm"
           >
-            <span className="text-zinc-500">{k}</span>
+            <span className="truncate text-zinc-500">{k}</span>
             <span className="font-mono text-violet-200">₹{tierRates[k]}/M</span>
           </div>
         ))}
@@ -52,19 +52,19 @@ export function LiveRatesBoard({
         {items.map((p) => (
           <div
             key={p.itemSlug}
-            className="card-glow flex items-center justify-between gap-2 transition hover:border-violet-500/30"
+            className="card-glow flex min-w-0 items-center justify-between gap-2 transition hover:border-violet-500/30"
           >
-            <div>
-              <p className="text-sm font-medium text-zinc-100">{p.itemName}</p>
+            <div className="min-w-0">
+              <p className="break-words text-sm font-medium text-zinc-100">{p.itemName}</p>
               <p className="text-xs text-zinc-500">{p.unitLabel}</p>
               {p.kind === "CURRENCY" && (
                 <p className="text-[10px] text-zinc-600">Uses tier rate / M</p>
               )}
             </div>
-            <p className="font-mono text-sm font-medium text-violet-200">
+            <p className="shrink-0 font-mono text-sm font-medium text-violet-200">
               {p.kind === "CURRENCY" ? "—" : formatInr(p.currentPrice)}
             </p>
-            <TrendingUp className="h-4 w-4 text-zinc-600" aria-hidden />
+            <TrendingUp className="hidden h-4 w-4 shrink-0 text-zinc-600 sm:block" aria-hidden />
           </div>
         ))}
       </div>

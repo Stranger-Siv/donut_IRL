@@ -303,10 +303,10 @@ export function SellClient() {
   const showAccountFields = needsAccount && step === 3;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-50">Sell</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <h1 className="text-balance text-xl font-semibold text-zinc-50 sm:text-2xl">Sell</h1>
+        <p className="mt-1 text-sm leading-relaxed text-zinc-500">
           1M in-game money only. Pick a line, quantity, and payout — we only ask for an account at
           checkout (guest) or you can use your existing seller account.
         </p>
@@ -356,7 +356,7 @@ export function SellClient() {
                 value={ignDraft}
                 onChange={(e) => setIgnDraft(e.target.value)}
                 placeholder="e.g. MyMain"
-                className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 focus:border-violet-500/50 focus:outline-none focus:ring-1 focus:ring-violet-500/30"
+                className="input-field"
               />
               <div className="flex flex-wrap gap-2">
                 <button
@@ -385,12 +385,12 @@ export function SellClient() {
         </div>
       )}
 
-      <ol className="flex flex-wrap gap-2 text-xs text-zinc-500" aria-label="Steps">
+      <ol className="flex flex-wrap gap-1.5 text-[11px] text-zinc-500 sm:gap-2 sm:text-xs" aria-label="Steps">
         {[1, 2, 3].map((n) => (
           <li
             key={n}
             className={cn(
-              "inline-flex min-h-8 min-w-0 items-center rounded-md border border-transparent px-2.5 py-1.5",
+              "inline-flex min-h-8 min-w-0 items-center rounded-md border border-transparent px-2.5 py-1.5 sm:min-h-0",
               step === n && "border-violet-500/40 bg-violet-500/20 text-violet-100",
               step > n && "text-emerald-500/80"
             )}
@@ -410,7 +410,7 @@ export function SellClient() {
             onClick={goNext}
             disabled={!step1Valid}
             className={cn(
-              "focus-brand flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold",
+              "focus-brand flex min-h-11 w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold",
               step1Valid
                 ? "bg-violet-600 text-white hover:bg-violet-500"
                 : "cursor-not-allowed border border-red-500/40 bg-red-950/50 text-red-200/90"
@@ -465,14 +465,14 @@ export function SellClient() {
               name="payoutDetails"
               required
               rows={3}
-              className="focus-brand w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+              className="focus-brand w-full min-w-0 rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2.5 text-base sm:text-sm"
               placeholder="UPI / account + IFSC / wallet"
             />
             {step === 2 && needsAccount && (
               <button
                 type="button"
                 onClick={goNext}
-                className="focus-brand w-full rounded-lg bg-violet-600/80 py-2.5 text-sm font-semibold text-white"
+                className="focus-brand min-h-11 w-full rounded-lg bg-violet-600/80 py-2.5 text-sm font-semibold text-white"
               >
                 Continue to account
               </button>
@@ -490,7 +490,7 @@ export function SellClient() {
               type="email"
               required
               autoComplete="email"
-              className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+              className="input-field"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -500,7 +500,7 @@ export function SellClient() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+              className="input-field"
               placeholder="Password (min 8)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -509,14 +509,14 @@ export function SellClient() {
               type="password"
               required
               minLength={8}
-              className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 text-sm"
+              className="input-field"
               placeholder="Confirm password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <input
               type="text"
-              className="w-full rounded-lg border border-white/10 bg-zinc-950/80 px-3 py-2 font-mono text-sm uppercase"
+              className="input-field font-mono text-sm uppercase sm:text-sm"
               placeholder="Referral code (optional)"
               value={referral}
               onChange={(e) => setReferral(e.target.value.toUpperCase())}
@@ -532,7 +532,7 @@ export function SellClient() {
           <button
             type="submit"
             disabled={loading}
-            className="focus-brand w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+            className="focus-brand min-h-11 w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
           >
             {loading ? "…" : "Submit order"}
           </button>
@@ -542,7 +542,7 @@ export function SellClient() {
           <button
             type="submit"
             disabled={loading}
-            className="focus-brand w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+            className="focus-brand min-h-11 w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
           >
             {loading ? "…" : "Create account & submit order"}
           </button>

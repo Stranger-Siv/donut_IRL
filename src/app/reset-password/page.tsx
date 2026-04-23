@@ -12,8 +12,8 @@ export default async function ResetPasswordPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm space-y-6 py-4">
-      <h1 className="text-2xl font-semibold text-zinc-50">Set new password</h1>
+    <div className="mx-auto w-full min-w-0 max-w-sm space-y-5 py-2 sm:space-y-6 sm:py-4">
+      <h1 className="text-balance text-xl font-semibold text-zinc-50 sm:text-2xl">Set new password</h1>
       <ResetForm />
     </div>
   );
