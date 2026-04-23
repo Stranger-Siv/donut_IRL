@@ -23,6 +23,10 @@ export async function connectDB(): Promise<typeof mongoose> {
   if (!globalForMongoose.mongoose.promise) {
     globalForMongoose.mongoose.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
+      /* Atlas + slow cold starts (e.g. first request on a host) */
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 20_000,
+      connectTimeoutMS: 20_000,
     });
   }
   globalForMongoose.mongoose.conn = await globalForMongoose.mongoose.promise;
