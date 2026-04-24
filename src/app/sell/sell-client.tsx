@@ -195,23 +195,53 @@ export function SellClient() {
       return;
     }
 
+    if (!session || session.user.role !== "USER") {
+      if (!email.trim() || !password || password !== confirmPassword) {
+        toast.error("Enter a valid email and matching passwords (min 8 chars).");
+        return;
+      }
+      const suggestedName = (email.trim().split("@")[0] || "Seller").trim();
+      const regBody: Record<string, unknown> = {
+        name: suggestedName.length >= 2 ? suggestedName : "Seller User",
+        email: email.trim().toLowerCase(),
+        password,
+      };
+      if (referral.trim()) regBody.referralCode = referral.trim().toUpperCase();
+      setLoading(true);
+      const regRes = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(regBody),
+      });
+      const regJson = (await regRes.json().catch(() => ({}))) as { error?: string; email?: string };
+      setLoading(false);
+      if (!regRes.ok) {
+        toast.error(regJson.error || "Could not create account");
+        return;
+      }
+      const sign = await signIn("credentials", {
+        email: regJson.email || email.trim().toLowerCase(),
+        password,
+        redirect: false,
+        callbackUrl: "/sell",
+      });
+      if (!sign?.ok) {
+        toast.success("Account created. Please log in to continue.");
+        router.push("/login?callbackUrl=/sell");
+        return;
+      }
+      toast.success("Account created. Review details and tap Submit order.");
+      setStep(2);
+      router.refresh();
+      return;
+    }
+
     const orderBody: Record<string, unknown> = {
       itemSlug,
       quantity,
       payoutMethod,
       payoutDetails,
     };
-
-    if (!session || session.user.role !== "USER") {
-      if (!email.trim() || !password || password !== confirmPassword) {
-        toast.error("Enter a valid email and matching passwords (min 8 chars).");
-        return;
-      }
-      orderBody.email = email.trim().toLowerCase();
-      orderBody.password = password;
-      orderBody.confirmPassword = confirmPassword;
-      if (referral.trim()) orderBody.referralCode = referral.trim().toUpperCase();
-    }
 
     setLoading(true);
     const res = await fetch("/api/orders", {
@@ -228,34 +258,13 @@ export function SellClient() {
     };
     setLoading(false);
 
-    if (res.status === 409 && j.code === "EXISTING_EMAIL") {
-      toast.error(j.error || "Account exists");
-      router.push("/login?callbackUrl=/sell");
-      return;
-    }
     if (!res.ok) {
       toast.error(j.error || "Order failed");
       return;
     }
 
     const orderId = j._id as string;
-    if (j.createdAccount && j.email) {
-      const sign = await signIn("credentials", {
-        email: j.email,
-        password: password,
-        redirect: false,
-        callbackUrl: "/dashboard",
-      });
-      if (sign?.ok) {
-        toast.success("Account created and order placed.");
-        router.push(`/orders/${orderId}`);
-        router.refresh();
-        return;
-      }
-      toast.success("Order placed. Log in to track.");
-    } else {
-      toast.success("Order placed.");
-    }
+    toast.success("Order placed.");
     router.push(`/orders/${orderId}`);
     router.refresh();
   }
@@ -414,8 +423,8 @@ export function SellClient() {
               onChange={(e) => setReferral(e.target.value.toUpperCase())}
             />
             <p className="text-xs text-zinc-500">
-              By submitting you create an account and accept the order. Discord can be linked later in
-              settings.
+              This step creates your account only. Your order is submitted only after you log in and tap
+              Submit order.
             </p>
           </div>
         )}
@@ -436,7 +445,7 @@ export function SellClient() {
             disabled={loading}
             className="focus-brand min-h-11 w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
           >
-            {loading ? "…" : "Create account & submit order"}
+            {loading ? "…" : "Create account"}
           </button>
         )}
 

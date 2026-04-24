@@ -202,9 +202,6 @@ export function OrderTrackClient({
       {(o.processingHint != null && o.processingHint !== "") ||
       o.queuePosition != null ? (
         <div className="card-glow space-y-1 rounded-lg border border-cyan-500/15 bg-cyan-950/20 p-3 text-sm text-cyan-100/90">
-          {o.isBusinessOpen === false && (
-            <p className="text-xs text-amber-200/90">We are currently outside the posted business window.</p>
-          )}
           {o.queuePosition != null && o.queuePosition > 0 && (
             <p className="text-xs">Queue position (approx.): {o.queuePosition}</p>
           )}

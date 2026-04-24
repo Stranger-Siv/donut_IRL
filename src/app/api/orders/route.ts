@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongodb";
 import { getSessionUser } from "@/lib/api-auth";
 import { Price } from "@/models/Price.model";
 import { Order } from "@/models/Order.model";
 import { User } from "@/models/User.model";
-import { Referral } from "@/models/Referral.model";
 import { getTierRates } from "@/lib/rate-settings";
 import { getSellMinimums } from "@/lib/sell-minimums";
 import { computeOrderAmounts } from "@/lib/payout-calc";
-import { generateReferralCode } from "@/lib/utils";
 import {
   isPublicCatalogItem,
   normalizeOrderItemSlug,
@@ -30,19 +27,6 @@ const orderFields = z.object({
   quantity: z.number().positive(),
   payoutMethod: z.enum(["UPI", "BANK", "CRYPTO"]),
   payoutDetails: z.string().min(1).max(2000),
-});
-
-const guestExtra = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(128),
-  confirmPassword: z.string().min(8).max(128),
-  name: z.string().min(2).max(80).optional(),
-  referralCode: z.string().max(20).optional(),
-});
-
-const guestSchema = orderFields.merge(guestExtra).refine((d) => d.password === d.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
 });
 
 function pickIp(h: Headers) {
@@ -188,136 +172,43 @@ export async function POST(req: Request) {
   const h = await headers();
   const signupIp = pickIp(h);
 
-  if (s && s.role === "USER") {
-    const parsed = orderFields.safeParse(json);
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-    }
-    await connectDB();
-    const u = await User.findById(s.id);
-    if (!u) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-    u.lastIp = signupIp || u.lastIp;
-    await u.save();
-    const slug = normalizeOrderItemSlug(parsed.data.itemSlug);
-    const res = await createOrderForUser(
-      u,
-      slug,
-      parsed.data.quantity,
-      parsed.data.payoutMethod,
-      parsed.data.payoutDetails
+  if (!s) {
+    return NextResponse.json(
+      { error: "Log in first. Create account, then submit your order." },
+      { status: 401 }
     );
-    if ("error" in res) {
-      const e = res as { error: string; status: number; code?: string };
-      return NextResponse.json(
-        { error: e.error, ...(e.code ? { code: e.code } : {}) },
-        { status: e.status }
-      );
-    }
-    return NextResponse.json(res);
   }
-
-  if (s && s.role !== "USER") {
+  if (s.role !== "USER") {
     return NextResponse.json(
       { error: "Use a user account to sell" },
       { status: 403 }
     );
   }
-
-  const parsed = guestSchema.safeParse(json);
+  const parsed = orderFields.safeParse(json);
   if (!parsed.success) {
-    const msg = parsed.error.flatten().formErrors[0] || parsed.error.message || "Invalid input";
-    return NextResponse.json({ error: msg }, { status: 400 });
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
-
-  const {
-    itemSlug,
-    quantity,
-    payoutMethod,
-    payoutDetails,
-    email,
-    password,
-    name,
-    referralCode,
-  } = parsed.data;
-  const slug = normalizeOrderItemSlug(itemSlug);
-
   await connectDB();
-
-  const existing = await User.findOne({ email: email.toLowerCase().trim() });
-  if (existing) {
-    return NextResponse.json(
-      {
-        error: "An account with this email already exists. Log in, then place your order.",
-        code: "EXISTING_EMAIL",
-      },
-      { status: 409 }
-    );
+  const u = await User.findById(s.id);
+  if (!u) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-
-  let refUser = null;
-  if (referralCode?.trim()) {
-    const code = referralCode.trim().toUpperCase();
-    refUser = await User.findOne({ referralCode: code });
-    if (!refUser) {
-      return NextResponse.json({ error: "Invalid referral code" }, { status: 400 });
-    }
-  }
-
-  const passwordHash = await bcrypt.hash(password, 12);
-  let ownCode = generateReferralCode();
-  for (let i = 0; i < 5; i++) {
-    const taken = await User.findOne({ referralCode: ownCode });
-    if (!taken) break;
-    ownCode = generateReferralCode();
-  }
-
-  const displayName = name?.trim() || email.split("@")[0] || "Seller";
-
-  const u = await User.create({
-    name: displayName,
-    email: email.toLowerCase().trim(),
-    passwordHash,
-    role: "USER",
-    sellerTier: "STANDARD",
-    lifetimeVolumeSold: 0,
-    referralCode: ownCode,
-    referredBy: refUser?._id ?? null,
-    signupIp,
-    lastIp: signupIp,
-  });
-
-  if (refUser) {
-    await Referral.create({
-      referrerId: refUser._id,
-      referredId: u._id,
-      code: refUser.referralCode!,
-      referredIp: signupIp,
-      progressVolumeM: 0,
-    });
-  }
-
+  u.lastIp = signupIp || u.lastIp;
+  await u.save();
+  const slug = normalizeOrderItemSlug(parsed.data.itemSlug);
   const res = await createOrderForUser(
     u,
     slug,
-    quantity,
-    payoutMethod,
-    payoutDetails
+    parsed.data.quantity,
+    parsed.data.payoutMethod,
+    parsed.data.payoutDetails
   );
   if ("error" in res) {
-    await User.deleteOne({ _id: u._id });
     const e = res as { error: string; status: number; code?: string };
     return NextResponse.json(
       { error: e.error, ...(e.code ? { code: e.code } : {}) },
       { status: e.status }
     );
   }
-
-  return NextResponse.json({
-    _id: res._id,
-    status: res.status,
-    createdAccount: true,
-    email: u.email,
-  });
+  return NextResponse.json(res);
 }

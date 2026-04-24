@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { DashboardPageSkeleton } from "@/components/ui/skeleton";
 
 type Me = {
+  role: string;
   sellerTier: string;
   currentRatePerM: number;
   lifetimeVolumeSold: number;
@@ -64,18 +65,39 @@ export function DashboardClient() {
 
   const load = useCallback(async () => {
     try {
-      const [m, o, r, n, w] = await Promise.all([
-        fetch("/api/user/me"),
-        fetch("/api/orders"),
-        fetch("/api/referrals", { cache: "no-store" }),
-        fetch("/api/user/notifications"),
-        fetch("/api/user/wallet"),
+      const m = await fetch("/api/user/me", { cache: "no-store", credentials: "include" });
+      if (!m.ok) {
+        setMe(null);
+        setOrders([]);
+        setRef(null);
+        setNoti([]);
+        setWallet(null);
+        return;
+      }
+      const meData = (await m.json()) as Me;
+      setMe(meData);
+
+      const isSeller = meData.role === "USER";
+      const [o, r, n, w] = await Promise.all([
+        isSeller
+          ? fetch("/api/orders", { cache: "no-store", credentials: "include" })
+          : Promise.resolve(null),
+        isSeller
+          ? fetch("/api/referrals", { cache: "no-store", credentials: "include" })
+          : Promise.resolve(null),
+        fetch("/api/user/notifications", { cache: "no-store", credentials: "include" }),
+        isSeller
+          ? fetch("/api/user/wallet", { cache: "no-store", credentials: "include" })
+          : Promise.resolve(null),
       ]);
-      if (m.ok) setMe((await m.json()) as Me);
-      if (o.ok) setOrders((await o.json()) as Order[]);
-      if (r.ok) setRef((await r.json()) as Ref);
+      if (o?.ok) setOrders((await o.json()) as Order[]);
+      else setOrders([]);
+      if (r?.ok) setRef((await r.json()) as Ref);
+      else setRef(null);
       if (n.ok) setNoti((await n.json()) as Noti[]);
-      if (w.ok) setWallet((await w.json()) as Wallet);
+      else setNoti([]);
+      if (w?.ok) setWallet((await w.json()) as Wallet);
+      else setWallet(null);
     } finally {
       setBoot(false);
     }
