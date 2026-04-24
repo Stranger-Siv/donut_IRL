@@ -10,10 +10,13 @@ import {
   normalizeSellerTier,
   sellerTierFromVolumeM,
 } from "@/lib/tier";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -68,6 +71,8 @@ const patchMeSchema = z.object({
 });
 
 export async function PATCH(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

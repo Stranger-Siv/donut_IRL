@@ -20,6 +20,7 @@ import {
   isWithinBusinessHours,
   toBusinessBlock,
 } from "@/lib/order-queue-sla";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(_req);
+  if (__m) return __m;
   const { id } = await params;
   const s = await getSessionUser();
   if (!s) {
@@ -92,6 +95,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const { id } = await params;
   const s = await getSessionUser();
   if (!s) {

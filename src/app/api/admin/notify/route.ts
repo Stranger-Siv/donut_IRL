@@ -6,6 +6,7 @@ import { User } from "@/models/User.model";
 import { Notification } from "@/models/Notification.model";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
 import { subDays } from "date-fns";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,8 @@ const body = z.object({
 });
 
 export async function POST(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

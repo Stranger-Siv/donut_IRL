@@ -6,6 +6,7 @@ import { RateSettings } from "@/models/RateSettings.model";
 import { Price } from "@/models/Price.model";
 import { sendDiscordEvent } from "@/lib/discord";
 import { CANONICAL_MONEY_SLUG } from "@/lib/catalog-scope";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 const patchSchema = z.object({
   standardRate: z.number().min(0).max(1000).optional(),
@@ -15,7 +16,9 @@ const patchSchema = z.object({
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -38,6 +41,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

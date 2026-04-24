@@ -10,6 +10,7 @@ import {
   extFromImageMime,
   maxAttachmentSizeBytes,
 } from "@/lib/order-message-attachments";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -22,6 +23,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const { id: orderId } = await params;
   if (!isObjectId24(orderId)) {
     return NextResponse.json({ error: "Invalid order" }, { status: 400 });

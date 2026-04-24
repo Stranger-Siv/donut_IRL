@@ -11,6 +11,7 @@ import {
   hashPasswordResetToken,
   publicAppBaseUrl,
 } from "@/lib/password-reset-token";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -19,6 +20,8 @@ const bodySchema = z.object({
 const PUBLIC_MESSAGE = "If an account exists for that email, we sent a reset link.";
 
 export async function POST(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   let json: unknown;
   try {
     json = await req.json();

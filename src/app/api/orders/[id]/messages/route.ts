@@ -8,6 +8,7 @@ import { canReadOrder, canPostOrderMessage } from "@/lib/order-guards";
 import { orderChannelPub } from "@/lib/order-channel";
 import { attachmentUrlSchema } from "@/lib/order-message-attachments";
 import { toMessageResponse } from "@/lib/order-message-serialize";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(_req);
+  if (__m) return __m;
   const { id } = await params;
   const s = await getSessionUser();
   if (!s) {
@@ -69,6 +72,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const { id } = await params;
   const s = await getSessionUser();
   if (!s) {

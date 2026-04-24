@@ -9,6 +9,7 @@ import { syncTierRatesToMoneyDiamond } from "@/lib/rate-settings";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
 import { sendDiscordEvent } from "@/lib/discord";
 import { CANONICAL_MONEY_SLUG } from "@/lib/catalog-scope";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ const body = z.object({
 });
 
 export async function POST(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

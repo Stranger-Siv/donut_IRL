@@ -6,6 +6,7 @@ import { canReadOrder } from "@/lib/order-guards";
 import { Order } from "@/models/Order.model";
 import { orderChannelPub } from "@/lib/order-channel";
 import { toOrderResponse } from "@/lib/order-response";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const { id: orderId } = await params;
   const s = await getSessionUser();
   if (!s) {

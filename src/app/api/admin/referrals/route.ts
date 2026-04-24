@@ -7,6 +7,7 @@ import { User } from "@/models/User.model";
 import { INELIGIBLE_REASONS } from "@/lib/referral-ineligible";
 import { REFERRAL_VOLUME_THRESHOLD_M } from "@/lib/constants";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ const patchBody = z.object({
   rewardMillionIg: z.string().max(20).optional(),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -92,6 +95,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

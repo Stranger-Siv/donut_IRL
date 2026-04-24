@@ -5,6 +5,7 @@ import { User } from "@/models/User.model";
 import { Order } from "@/models/Order.model";
 import { Referral } from "@/models/Referral.model";
 import { REFERRAL_VOLUME_THRESHOLD_M } from "@/lib/constants";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,9 @@ function toIso(d: Date | undefined) {
   return d ? new Date(d).toISOString() : null;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

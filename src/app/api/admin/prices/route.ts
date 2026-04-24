@@ -13,6 +13,7 @@ import {
   isPublicCatalogItem,
 } from "@/lib/catalog-scope";
 import { syncTierRatesToMoneyDiamond } from "@/lib/rate-settings";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,9 @@ const patchSchema = z.object({
   sortOrder: z.number().optional(),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -49,6 +52,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -118,6 +123,8 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -205,6 +212,8 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

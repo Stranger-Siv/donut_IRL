@@ -8,6 +8,7 @@ import { AdminNote } from "@/models/AdminNote.model";
 import { z } from "zod";
 import { Types } from "mongoose";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ const patchBody = z.object({
   role: z.enum(["USER", "STAFF"]).optional(),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -79,6 +82,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

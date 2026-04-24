@@ -5,6 +5,7 @@ import { Referral } from "@/models/Referral.model";
 import { User } from "@/models/User.model";
 import { explainIneligibility, INELIGIBILITY_EXPLANATION_FALLBACK } from "@/lib/referral-ineligible";
 import { REFERRAL_REWARD_IG, REFERRAL_VOLUME_THRESHOLD_M } from "@/lib/constants";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,9 @@ function normIneligibleSt(st: string | undefined) {
     .toUpperCase();
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

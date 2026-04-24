@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order.model";
 import { canReadOrder } from "@/lib/order-guards";
 import { orderChannelSub } from "@/lib/order-channel";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -17,6 +18,8 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const { id: orderId } = await params;
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) {

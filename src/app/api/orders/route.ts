@@ -21,6 +21,7 @@ import { AppSettings } from "@/models/AppSettings.model";
 import { checkItemCapacity } from "@/lib/capacity-orders";
 import { suggestStaffForItem } from "@/lib/staff-assignment";
 import { Types } from "mongoose";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,9 @@ function pickIp(h: Headers) {
   );
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -178,6 +181,8 @@ async function createOrderForUser(
 }
 
 export async function POST(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const json = await req.json();
   const s = await getSessionUser();
   const h = await headers();

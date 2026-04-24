@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSessionUser } from "@/lib/api-auth";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User.model";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 const putSchema = z.object({
   itemSlug: z.string().min(1).max(40),
@@ -13,6 +14,8 @@ const putSchema = z.object({
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -37,6 +40,8 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

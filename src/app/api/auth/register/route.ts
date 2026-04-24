@@ -7,6 +7,7 @@ import { Referral } from "@/models/Referral.model";
 import { generateReferralCode } from "@/lib/utils";
 import { DB_UNAVAILABLE_USER_MESSAGE, isMongoConnectionError } from "@/lib/db-errors";
 import { headers } from "next/headers";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 const bodySchema = z.object({
   name: z.string().min(2).max(80),
@@ -24,6 +25,8 @@ function pickIp(h: Headers) {
 }
 
 export async function POST(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   try {
     const json = await req.json();
     const parsed = bodySchema.safeParse(json);

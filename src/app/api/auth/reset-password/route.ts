@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User.model";
 import { DB_UNAVAILABLE_USER_MESSAGE, isMongoConnectionError } from "@/lib/db-errors";
 import { hashPasswordResetToken } from "@/lib/password-reset-token";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 const bodySchema = z.object({
   token: z.string().min(1).max(500),
@@ -12,6 +13,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   let json: unknown;
   try {
     json = await req.json();

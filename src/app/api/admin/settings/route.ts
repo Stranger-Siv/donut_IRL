@@ -6,6 +6,7 @@ import { AppSettings } from "@/models/AppSettings.model";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
 import { REFERRAL_REWARD_IG } from "@/lib/constants";
 import { invalidateMaintenanceCache } from "@/lib/maintenance.server";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,9 @@ const patch = z
   })
   .strict();
 
-export async function GET() {
+export async function GET(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -53,6 +56,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const m = await maintenanceResponseIfBlocked(req);
+  if (m) return m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models/Order.model";
 import { User } from "@/models/User.model";
 import { Types } from "mongoose";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,8 @@ function buildQuery(sp: URLSearchParams) {
 }
 
 export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   const s = await getSessionUser();
   if (!s || s.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

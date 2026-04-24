@@ -7,10 +7,13 @@ import { isMongoConnectionError } from "@/lib/db-errors";
 import { getSellMinimums } from "@/lib/sell-minimums";
 import { filterPublicCatalog, inferKind } from "@/lib/catalog-scope";
 import { AppSettings } from "@/models/AppSettings.model";
+import { maintenanceResponseIfBlocked } from "@/lib/maintenance-api-guard.server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const __m = await maintenanceResponseIfBlocked(req);
+  if (__m) return __m;
   try {
     await connectDB();
     const [rates, rawItems, mins, st] = await Promise.all([
