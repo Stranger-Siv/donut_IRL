@@ -3,14 +3,13 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { HardHat, Sparkles, Trophy, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 const TIPS = [
   "We’ll be back soon — orders and quotes pause while we patch things up.",
   "Your data stays put; this is a temporary pause in the public exchange.",
-  "Admins can still work — sign in with an admin account to get past this screen.",
-  "Follow our support link below if you need status or help with an open order.",
-  "Tier rates and promos can change after a deploy — check the home feed when we’re up.",
+  "We’re upgrading the pipes — check back a bit later for live rates and sells.",
+  "Follow the support link below if you need status or help with an open order.",
+  "Tier rates and promos can change after a deploy — the home feed will be ready when we’re up.",
 ] as const;
 
 let guestId: string | null = null;
@@ -92,8 +91,7 @@ export function MaintenanceModeFullPage({ supportUrl }: { supportUrl: string }) 
           We&apos;re in maintenance
         </h1>
         <p className="mt-2 max-w-md text-balance text-sm leading-relaxed text-zinc-500 sm:text-base">
-          The team is working on the exchange. The public app is offline for everyone except admins
-          (sign in with an admin account to work).
+          The team is working on the exchange. We&apos;ll be back shortly — thanks for your patience.
         </p>
 
         <div className="mt-6 w-full min-w-0 max-w-sm space-y-1.5 sm:max-w-md">
@@ -135,16 +133,10 @@ export function MaintenanceModeFullPage({ supportUrl }: { supportUrl: string }) 
           </span>
         </div>
 
-        <p className="mt-6 text-xs text-zinc-600 sm:text-sm">
-          Are you on the team?{" "}
-          <Link href="/login" className="text-violet-300 underline decoration-violet-500/50 underline-offset-2">
-            Admin sign in
-          </Link>
-        </p>
         {support ? (
           <a
             href={support}
-            className="mt-2 text-sm text-amber-200/80 underline decoration-amber-500/40"
+            className="mt-6 text-sm text-amber-200/80 underline decoration-amber-500/40"
             rel="noreferrer"
           >
             Support / status

@@ -319,9 +319,7 @@ export function AdminSettingsPage() {
           <span>
             <span className="font-medium">Full-site maintenance (everyone but admins)</span>
             <span className="mt-1 block text-xs text-zinc-500">
-              Non-admins and staff get a full-page maintenance screen. APIs return 503 except auth and health. Open{" "}
-              <span className="font-mono">/login</span> to sign in as an admin, then work as usual. Set Support URL
-              above for the public link.
+              Non-admins and staff see the full-page maintenance screen. APIs return 503 except system routes (auth, health, webhooks, cron). Set Support URL above for a link on that screen.
             </span>
           </span>
         </label>
