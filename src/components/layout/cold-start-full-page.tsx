@@ -161,7 +161,7 @@ export function ColdStartFullPage() {
         </div>
 
         <h1 className="text-balance text-xl font-semibold tracking-tight text-zinc-50 sm:text-2xl">
-          Warming up the exchange
+          Warming up Donut IRL
         </h1>
         <p className="mt-2 max-w-md text-balance text-sm leading-relaxed text-zinc-500 sm:text-base">
           Our app host can sleep when idle. Your request is starting the server — this screen shows when

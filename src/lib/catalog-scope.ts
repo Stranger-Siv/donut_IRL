@@ -1,5 +1,5 @@
 /**
- * Donut Exchange only buys **1M in-game money** (single catalog row).
+ * Donut IRL only buys **1M in-game money** (single catalog row).
  */
 
 export const MONEY_SLUGS = new Set(["1m", "1-m"]);

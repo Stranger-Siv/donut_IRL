@@ -39,7 +39,7 @@ export async function Navbar() {
             <Gamepad2 className="h-5 w-5" />
           </span>
           <span className="truncate text-sm text-zinc-100 sm:text-base">
-            Donut<span className="text-violet-400">Exchange</span>
+            Donut<span className="text-violet-400"> IRL</span>
           </span>
         </Link>
 

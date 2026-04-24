@@ -1,6 +1,6 @@
-# Donut Exchange
+# Donut IRL
 
-Next.js 14 (App Router) marketplace for **buying in-game items from users for real money** (INR). Dark, responsive UI; MongoDB; NextAuth; role-based admin/staff/seller tools.
+Next.js 14 (App Router) marketplace (**Donut IRL**) for **buying in-game items from users for real money** (INR). Dark, responsive UI; MongoDB; NextAuth; role-based admin/staff/seller tools. Production domain: **donutirl.online**.
 
 ## Stack
 

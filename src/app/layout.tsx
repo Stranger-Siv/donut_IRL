@@ -34,18 +34,20 @@ const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(base),
   title: {
-    default: "Donut Exchange — Sell in-game items for real money",
-    template: "%s | Donut Exchange",
+    default: "Donut IRL — Sell in-game items for real money",
+    template: "%s | Donut IRL",
   },
   description:
-    "Sell 1M in-game money for INR. Live tier rates, instant sell flow, and order tracking.",
+    "Sell 1M in-game money for INR. Live tier rates, instant sell flow, and order tracking at donutirl.online.",
   openGraph: {
-    title: "Donut Exchange — In-game to INR",
+    title: "Donut IRL — In-game to INR",
     description: "Live rates, instant sell flow, and trusted payouts for sellers.",
     type: "website",
     locale: "en_IN",
   },
   keywords: [
+    "Donut IRL",
+    "donutirl",
     "buy game items",
     "sell in-game gold",
     "INR payout",

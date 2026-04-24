@@ -1,6 +1,6 @@
 import { generateSecret, generateURI, verifySync } from "otplib";
 
-const ISSUER = "Donut Exchange";
+const ISSUER = "Donut IRL";
 
 export function newTotpSecret(): string {
   return generateSecret();

@@ -37,7 +37,8 @@ function SidebarBrand() {
         href="/admin"
         className="block font-semibold tracking-tight text-zinc-100 transition hover:text-white"
       >
-        Donut <span className="text-violet-400">Admin</span>
+        Donut<span className="text-violet-400"> IRL</span>{" "}
+        <span className="text-violet-500/80">Admin</span>
       </Link>
       <p className="mt-1 text-[10px] font-medium uppercase tracking-widest text-zinc-500">
         Operations
@@ -178,7 +179,8 @@ function AdminNavDrawer({ open, onClose, pathname, titleId }: DrawerProps) {
                 onClick={close}
                 className="text-xs font-medium uppercase tracking-widest text-zinc-500"
               >
-                Donut <span className="text-violet-400">Admin</span>
+                Donut<span className="text-violet-400"> IRL</span>{" "}
+                <span className="text-violet-500/80">Admin</span>
               </Link>
             </div>
             <NavList pathname={pathname} onNavigate={close} variant="drawer" />
@@ -213,7 +215,10 @@ export function AdminMobileNav({ pathname }: { pathname: string }) {
           <Menu className="h-5 w-5" strokeWidth={2} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-zinc-100">Donut Admin</p>
+          <p className="truncate text-sm font-semibold text-zinc-100">
+            Donut<span className="text-violet-400"> IRL</span>{" "}
+            <span className="text-violet-500/80">Admin</span>
+          </p>
           <p className="truncate text-[10px] text-zinc-500">Operations</p>
         </div>
         <Link

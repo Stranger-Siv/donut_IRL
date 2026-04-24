@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const TIPS = [
   "We’ll be back soon — orders and quotes pause while we patch things up.",
-  "Your data stays put; this is a temporary pause in the public exchange.",
+  "Your data stays put; this is a temporary pause on the site.",
   "We’re upgrading the pipes — check back a bit later for live rates and sells.",
   "Follow the support link below if you need status or help with an open order.",
   "Tier rates and promos can change after a deploy — the home feed will be ready when we’re up.",
@@ -127,7 +127,7 @@ export function MaintenanceModeFullPage({ supportUrl }: { supportUrl: string }) 
           We&apos;re in maintenance
         </h1>
         <p className="mt-2 max-w-md text-balance text-sm leading-relaxed text-zinc-500 sm:text-base">
-          The team is working on the exchange. We&apos;ll be back shortly — thanks for your patience.
+          The team is working on the site. We&apos;ll be back shortly — thanks for your patience.
         </p>
         <p className="mt-2 max-w-md text-balance text-[11px] leading-relaxed text-zinc-600 sm:text-xs">
           We check in the background every minute; when the site is open again, this page will refresh and take you
