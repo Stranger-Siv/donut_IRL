@@ -308,14 +308,24 @@ export function AdminSettingsPage() {
           </label>
         </div>
       </div>
-      <label className="flex items-center gap-2 text-sm text-zinc-300">
-        <input
-          type="checkbox"
-          checked={s.maintenanceMode}
-          onChange={(e) => setS((x) => (x ? { ...x, maintenanceMode: e.target.checked } : x))}
-        />
-        Maintenance mode (enforce in public routes when wired)
-      </label>
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+        <label className="flex cursor-pointer items-start gap-2 text-sm text-zinc-200">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={s.maintenanceMode}
+            onChange={(e) => setS((x) => (x ? { ...x, maintenanceMode: e.target.checked } : x))}
+          />
+          <span>
+            <span className="font-medium">Full-site maintenance (everyone but admins)</span>
+            <span className="mt-1 block text-xs text-zinc-500">
+              Non-admins and staff get a full-page maintenance screen. APIs return 503 except auth and health. Open{" "}
+              <span className="font-mono">/login</span> to sign in as an admin, then work as usual. Set Support URL
+              above for the public link.
+            </span>
+          </span>
+        </label>
+      </div>
       <label className="block text-sm text-zinc-500">
         Admin IP allowlist (one per line, optional)
         <textarea

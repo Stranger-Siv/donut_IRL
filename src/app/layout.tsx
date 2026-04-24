@@ -14,6 +14,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { cn } from "@/lib/utils";
 import { ColdStartFullPage } from "@/components/layout/cold-start-full-page";
+import { MaintenanceModeFullPage } from "@/components/layout/maintenance-mode-full-page";
+import { getMaintenanceSnapshot } from "@/lib/maintenance.server";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -68,6 +70,16 @@ export default async function RootLayout({
     console.error("[Donut] getServerSession failed in root layout", e);
   }
   const pathname = getRequestPathname();
+  const pathNorm = pathname.replace(/\/$/, "") || "/";
+  let maintenance = { active: false, supportUrl: "" };
+  try {
+    maintenance = await getMaintenanceSnapshot();
+  } catch (e) {
+    console.error("[Donut] getMaintenanceSnapshot failed in root layout", e);
+  }
+  const role = session?.user?.role;
+  const showMaintenance =
+    maintenance.active && role !== "ADMIN" && pathNorm !== "/login";
   return (
     <html lang="en" className="dark max-w-[100%] overflow-x-clip">
       <body
@@ -87,17 +99,23 @@ export default async function RootLayout({
         <div className="pointer-events-none fixed inset-0 bg-noise" aria-hidden />
         <AppProviders>
           <div className="relative z-10 flex min-h-dvh w-full min-w-0 max-w-full flex-col overflow-x-clip">
-            <ColdStartFullPage />
-            <ShowUnlessAdmin>
-              <Navbar />
-            </ShowUnlessAdmin>
-            <ConditionalMain>{children}</ConditionalMain>
-            <ShowUnlessAdmin>
-              <Footer />
-            </ShowUnlessAdmin>
-            <ShowUnlessAdmin>
-              <MobileNav role={session?.user?.role} pathname={pathname} />
-            </ShowUnlessAdmin>
+            {showMaintenance ? (
+              <MaintenanceModeFullPage supportUrl={maintenance.supportUrl} />
+            ) : (
+              <>
+                <ColdStartFullPage />
+                <ShowUnlessAdmin>
+                  <Navbar />
+                </ShowUnlessAdmin>
+                <ConditionalMain>{children}</ConditionalMain>
+                <ShowUnlessAdmin>
+                  <Footer />
+                </ShowUnlessAdmin>
+                <ShowUnlessAdmin>
+                  <MobileNav role={session?.user?.role} pathname={pathname} />
+                </ShowUnlessAdmin>
+              </>
+            )}
           </div>
         </AppProviders>
       </body>

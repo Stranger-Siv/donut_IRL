@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import { AppSettings } from "@/models/AppSettings.model";
 import { logAdminAction, getRequestIp } from "@/lib/admin-audit";
 import { REFERRAL_REWARD_IG } from "@/lib/constants";
+import { invalidateMaintenanceCache } from "@/lib/maintenance.server";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,7 @@ export async function PATCH(req: Request) {
     Object.assign(doc, p.data);
     await doc.save();
   }
+  invalidateMaintenanceCache();
   await logAdminAction(s.id, "settings.update", { ip: getRequestIp(req.headers) });
   return NextResponse.json({ ok: true });
 }
