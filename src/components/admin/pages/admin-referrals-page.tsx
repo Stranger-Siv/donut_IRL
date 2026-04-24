@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { adminIneligibleSourceLabel, explainIneligibility } from "@/lib/referral-ineligible";
 import { AdminPageHeader, TableShell, StatGrid } from "../ui";
+import { cn } from "@/lib/utils";
 
 type Item = {
   _id: string;
@@ -22,6 +23,22 @@ type Item = {
   ineligibleUserMessage?: string;
   adminNote?: string;
 };
+
+function statusNorm(s: string | undefined) {
+  return String(s ?? "")
+    .trim()
+    .toUpperCase();
+}
+
+function isCompletedLike(s: string | undefined) {
+  const n = statusNorm(s);
+  return n === "COMPLETED" || n === "REWARDED";
+}
+
+function displayStatus(s: string | undefined) {
+  const n = statusNorm(s);
+  return n === "REWARDED" ? "COMPLETED" : n || "—";
+}
 
 export function AdminReferralsPage() {
   const [data, setData] = useState<{
@@ -148,7 +165,7 @@ export function AdminReferralsPage() {
           </p>
           <p className="mt-2 text-xs text-zinc-500">
             <strong className="text-zinc-400">How to pay:</strong> Rows here are <strong className="text-zinc-400">COMPLETED</strong>{" "}
-            (50M+ met and approved) but <strong className="text-zinc-400">not</strong> yet marked paid in-game. Send the{" "}
+            (50M+ met and approved; includes legacy REWARDED rows) but <strong className="text-zinc-400">not</strong> yet marked paid in-game. Send the{" "}
             <strong className="text-zinc-400">M</strong> amount in-game to the <strong className="text-zinc-400">referrer</strong>{" "}
             (not the referred user), then click <strong className="text-zinc-400">Mark paid in-game</strong>.
           </p>
@@ -252,7 +269,8 @@ export function AdminReferralsPage() {
       )}
 
       <TableShell>
-        <table className="w-full min-w-0 table-fixed text-left text-[10px] sm:text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[980px] text-left text-[10px] sm:text-sm">
           <thead className="text-zinc-500 sm:text-xs">
             <tr>
               <th className="w-[6%] p-1.5 sm:p-2">Code</th>
@@ -288,7 +306,18 @@ export function AdminReferralsPage() {
                 <td className="min-w-0 p-1.5 font-mono text-[9px] sm:p-2 sm:text-xs">
                   {r.progressVolumeM}
                 </td>
-                <td className="min-w-0 p-1.5 text-[9px] sm:p-2 sm:text-xs">{r.status}</td>
+                <td className="min-w-0 p-1.5 text-[9px] sm:p-2 sm:text-xs">
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-0.5",
+                      statusNorm(r.status) === "PENDING" && "bg-zinc-800 text-zinc-300",
+                      isCompletedLike(r.status) && "bg-emerald-500/15 text-emerald-200/90",
+                      statusNorm(r.status) === "INELIGIBLE" && "bg-amber-500/10 text-amber-200/90"
+                    )}
+                  >
+                    {displayStatus(r.status)}
+                  </span>
+                </td>
                 <td className="min-w-0 max-w-0 p-1.5 align-top text-[9px] leading-relaxed text-zinc-400 sm:p-2 sm:text-[11px]">
                   {r.status === "INELIGIBLE" ? (
                     <div className="space-y-1.5">
@@ -316,11 +345,11 @@ export function AdminReferralsPage() {
                   )}
                 </td>
                 <td className="min-w-0 p-1.5 text-[9px] text-zinc-500 sm:p-2 sm:text-[10px]">
-                  {["COMPLETED", "REWARDED"].includes(String(r.status)) && r.referrerPayoutDeliveredAt ? (
+                  {isCompletedLike(r.status) && r.referrerPayoutDeliveredAt ? (
                     <span className="text-emerald-500/90" title={r.referrerPayoutDeliveredAt}>
                       Paid
                     </span>
-                  ) : ["COMPLETED", "REWARDED"].includes(String(r.status)) ? (
+                  ) : isCompletedLike(r.status) ? (
                     <span className="text-amber-500/80">Pend</span>
                   ) : (
                     "—"
@@ -328,23 +357,36 @@ export function AdminReferralsPage() {
                 </td>
                 <td className="min-w-0 p-1.5 sm:p-2">
                   <div className="flex min-w-0 flex-wrap gap-0.5 sm:gap-1">
-                    <button
-                      type="button"
-                      className="text-[10px] text-emerald-400"
-                      onClick={() => void act(r._id, "approve_reward")}
-                    >
-                      Mark completed
-                    </button>
-                    <button
-                      type="button"
-                      className="text-[10px] text-amber-400"
-                      onClick={() => {
-                        setMarkIneligibleId(r._id);
-                        setPublicIneligible((r.ineligibleUserMessage as string) || "");
-                      }}
-                    >
-                      Ineligible
-                    </button>
+                    {statusNorm(r.status) === "PENDING" && (
+                      <button
+                        type="button"
+                        className="text-[10px] text-emerald-400"
+                        onClick={() => void act(r._id, "approve_reward")}
+                      >
+                        Mark completed
+                      </button>
+                    )}
+                    {isCompletedLike(r.status) && !r.referrerPayoutDeliveredAt && (
+                      <button
+                        type="button"
+                        className="text-[10px] text-cyan-300"
+                        onClick={() => void act(r._id, "mark_referrer_payout_delivered")}
+                      >
+                        Mark paid
+                      </button>
+                    )}
+                    {statusNorm(r.status) !== "INELIGIBLE" && (
+                      <button
+                        type="button"
+                        className="text-[10px] text-amber-400"
+                        onClick={() => {
+                          setMarkIneligibleId(r._id);
+                          setPublicIneligible((r.ineligibleUserMessage as string) || "");
+                        }}
+                      >
+                        Ineligible
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="text-[10px] text-zinc-500"
@@ -358,6 +400,7 @@ export function AdminReferralsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </TableShell>
     </div>
   );

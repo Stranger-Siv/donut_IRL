@@ -195,7 +195,12 @@ export function SellClient() {
       return;
     }
 
-    if (!session || session.user.role !== "USER") {
+    const role = session?.user?.role;
+    if (session && role !== "USER") {
+      toast.error("You are logged in as staff/admin. Use a seller account to place orders.");
+      return;
+    }
+    if (!session) {
       if (!email.trim() || !password || password !== confirmPassword) {
         toast.error("Enter a valid email and matching passwords (min 8 chars).");
         return;
@@ -269,7 +274,10 @@ export function SellClient() {
     router.refresh();
   }
 
-  const needsAccount = !session || session.user.role !== "USER";
+  const role = session?.user?.role;
+  const isGuest = !session;
+  const roleBlocked = !!session && role !== "USER";
+  const needsAccount = isGuest;
   const showAccountFields = needsAccount && step === 3;
 
   if (sessionStatus === "loading" || !storeReady) {
@@ -378,6 +386,12 @@ export function SellClient() {
                 Continue to account
               </button>
             )}
+            {step === 2 && roleBlocked && (
+              <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-amber-100/90">
+                You are logged in as <strong>{role}</strong>. Selling is only for seller (USER) accounts.
+                Log out and sign in with a seller account.
+              </div>
+            )}
           </div>
         )}
 
@@ -429,7 +443,7 @@ export function SellClient() {
           </div>
         )}
 
-        {step === 2 && !needsAccount && (
+        {step === 2 && !needsAccount && !roleBlocked && (
           <button
             type="submit"
             disabled={loading}
@@ -468,7 +482,7 @@ export function SellClient() {
         </button>
       )}
 
-      {needsAccount && step < 2 && (
+        {needsAccount && step < 2 && (
         <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-sm text-amber-100/90">
           <Shield className="mt-0.5 h-4 w-4 shrink-0" />
           <span>You can explore rates without signing in. We only ask for an account on the last step.</span>

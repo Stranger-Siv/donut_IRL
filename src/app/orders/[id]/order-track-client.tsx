@@ -35,6 +35,7 @@ export function OrderTrackClient({
   const { data: s } = useSession();
   const [o, setO] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
   const [users, setUsers] = useState<StaffPick[]>([]);
   const [aid, setAid] = useState("");
   const [status, setStatus] = useState("PENDING");
@@ -44,6 +45,12 @@ export function OrderTrackClient({
     setLoading(true);
     try {
       const res = await fetch(`/api/orders/${id}`);
+      if (res.status === 401) {
+        setUnauthorized(true);
+        setO(null);
+        return;
+      }
+      setUnauthorized(false);
       if (!res.ok) {
         setO(null);
         return;
@@ -148,6 +155,19 @@ export function OrderTrackClient({
 
   if (loading) {
     return <OrderDetailSkeleton />;
+  }
+  if (unauthorized) {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-zinc-400">Log in to view this order.</p>
+        <Link
+          href={`/login?callbackUrl=/orders/${id}`}
+          className="inline-flex min-h-10 items-center rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-500"
+        >
+          Log in
+        </Link>
+      </div>
+    );
   }
   if (!o) {
     return (
