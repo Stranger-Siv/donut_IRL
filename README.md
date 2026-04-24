@@ -77,6 +77,22 @@ Without a database, **login, register, orders, and admin** will not work (NextAu
 | `/staff`    | Assigned orders only     |
 | `/login` · `/register` | Auth         |
 
+## Domain: **donutirl.online** (production)
+
+Use one **canonical** URL everywhere (usually `https://donutirl.online` **or** `https://www.donutirl.online`, not both without redirects).
+
+1. **In your host (e.g. [Render](https://render.com))** for the Web Service: **Settings → Custom Domains** → add `donutirl.online` (and `www.donutirl.online` if you want). Follow the panel’s **DNS instructions** at your registrar (often a **CNAME** to your `*.onrender.com` hostname, or **ALIAS/ANAME** for the apex). Wait until TLS shows as active.
+2. **Environment variables (required):** set these to your **canonical** HTTPS URL, **no trailing slash**:
+   - `NEXTAUTH_URL` — e.g. `https://donutirl.online`
+   - `NEXT_PUBLIC_APP_URL` — same value (used for metadata, emails, password-reset links).
+3. **Redeploy** after changing env vars so the server picks them up.
+4. **Smoke test:** open the site on the custom domain, sign in, and confirm sessions work. If cookies fail, `NEXTAUTH_URL` does not match the browser’s origin.
+5. **Email (optional):** set `EMAIL_FROM` to something on your domain (e.g. `Donut IRL <noreply@donutirl.online>`) after you add DNS (SPF/DKIM) with your mail provider.
+
+See also **`.env.example`** (production block at the bottom).
+
+---
+
 ## Deploy (Vercel, recommended)
 
 This app is a standard **Next.js 14** Node server (`next start`). Vercel detects it and runs the build automatically.
@@ -88,9 +104,9 @@ This app is a standard **Next.js 14** Node server (`next start`). Vercel detects
 | Variable | Notes |
 |----------|--------|
 | `MONGODB_URI` | Atlas connection string, or your managed Mongo URL. |
-| `NEXTAUTH_URL` | **Exact** public origin, e.g. `https://your-app.vercel.app` (no trailing slash issues are mostly OK; use the real domain when you add one). |
+| `NEXTAUTH_URL` | **Exact** public origin, e.g. `https://donutirl.online` or `https://your-app.vercel.app` (HTTPS, no trailing slash). |
 | `NEXTAUTH_SECRET` | Long random string (e.g. `openssl rand -base64 32`). |
-| `NEXT_PUBLIC_APP_URL` | Same as public site URL; used in emails and links. |
+| `NEXT_PUBLIC_APP_URL` | Same as `NEXTAUTH_URL` for the live site; used in emails, metadata, and password-reset links. |
 | `DISCORD_WEBHOOK_URL` | Optional. |
 | `INTERNAL_DISCORD_KEY` | Optional; for `POST /api/webhooks/discord`. |
 | `RESEND_API_KEY` or SMTP\* + `EMAIL_FROM` | Optional; needed for password reset email in production. |
