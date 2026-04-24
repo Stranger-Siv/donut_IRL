@@ -5,13 +5,14 @@ import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ClipboardPaste, Lock } from "lucide-react";
+import { ClipboardPaste, Eye, EyeOff, Lock } from "lucide-react";
 
 function Inner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const codeInputRef = useRef<HTMLInputElement>(null);
@@ -80,13 +81,26 @@ function Inner() {
           />
           <input
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
             autoComplete="current-password"
-            className="input-field pl-10"
+            className="input-field pl-10 pr-10"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="focus-brand absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded text-zinc-400 hover:text-zinc-200"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            title={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" aria-hidden />
+            ) : (
+              <Eye className="h-4 w-4" aria-hidden />
+            )}
+          </button>
         </div>
       </div>
       <div className="space-y-1.5">

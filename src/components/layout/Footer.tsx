@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-white/5 bg-zinc-950/50 py-6 text-center text-sm text-zinc-500 sm:py-8">
       <div className="mx-auto max-w-6xl space-y-2 px-3 sm:px-6">
-        <p className="text-balance text-xs leading-relaxed sm:text-sm">
+        <p className="hidden text-balance text-xs leading-relaxed sm:block sm:text-sm">
           IRL (real-money) exchange for Donut SMP in-game money. Independent service — not the
           server.
         </p>
