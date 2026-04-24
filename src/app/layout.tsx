@@ -122,7 +122,7 @@ export default async function RootLayout({
                   <Footer />
                 </ShowUnlessAdmin>
                 <ShowUnlessAdmin>
-                  <MobileNav role={session?.user?.role} pathname={pathname} />
+                  <MobileNav role={session?.user?.role} />
                 </ShowUnlessAdmin>
               </>
             )}

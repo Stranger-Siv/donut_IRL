@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Home, LineChart, LayoutDashboard, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AppRole } from "@/types/next-auth";
@@ -11,13 +12,14 @@ const base = [
   { href: "/dashboard", label: "You", icon: LayoutDashboard },
 ];
 
-export function MobileNav({
-  role,
-  pathname,
-}: {
-  role?: AppRole | string;
-  pathname: string;
-}) {
+function navActive(pathname: string, href: string): boolean {
+  const p = pathname === "/" ? "/" : pathname.replace(/\/$/, "") || "/";
+  if (href === "/") return p === "/";
+  return p === href || p.startsWith(`${href}/`);
+}
+
+export function MobileNav({ role }: { role?: AppRole | string }) {
+  const pathname = usePathname() || "/";
   const items = [...base];
   if (role === "STAFF" || role === "ADMIN")
     items.push({ href: "/staff", label: "Staff", icon: Shield });
@@ -28,7 +30,7 @@ export function MobileNav({
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-zinc-950/95 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] backdrop-blur-lg sm:hidden">
       <div className="mx-auto flex max-w-lg justify-around">
         {items.slice(0, 4).map(({ href, label, icon: Icon }) => {
-          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const active = navActive(pathname, href);
           return (
             <Link
               key={href}
