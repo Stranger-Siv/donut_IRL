@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { COMMUNITY_NAME } from "@/lib/brand";
 
 export function HeroSection() {
   return (
@@ -21,8 +22,9 @@ export function HeroSection() {
           </span>
         </h1>
         <p className="mt-4 max-w-xl text-pretty text-base text-zinc-400 sm:text-lg">
-          We buy <strong className="font-medium text-zinc-300">1M in-game money</strong> at published tier rates.
-          Check your tier, lock an estimate, and track your order in one place.
+          IRL (real-money) trading for <strong className="font-medium text-zinc-300">{COMMUNITY_NAME}</strong> — we
+          buy <strong className="font-medium text-zinc-300">1M in-game money</strong> at published tier rates. Check
+          your tier, lock an estimate, and track your order in one place.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link

@@ -50,7 +50,7 @@ export default async function Home() {
 
       <p className="mx-auto max-w-2xl text-balance px-0.5 text-center text-xs leading-relaxed text-zinc-500 sm:px-0">
         <span className="text-zinc-400">Tier</span> = lifetime volume: Gold from {data.thresholdsM.goldAt}M, Diamond
-        from {data.thresholdsM.diamondAt}M. Volume is counted in 1M (millions) of in-game money.
+        from {data.thresholdsM.diamondAt}M. Volume is counted in 1M (millions) of Donut SMP in-game money.
       </p>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">

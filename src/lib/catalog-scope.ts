@@ -1,5 +1,5 @@
 /**
- * Donut IRL only buys **1M in-game money** (single catalog row).
+ * Buys only **1M in-game money** (single catalog row), Donut SMP.
  */
 
 export const MONEY_SLUGS = new Set(["1m", "1-m"]);

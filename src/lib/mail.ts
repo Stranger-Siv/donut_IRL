@@ -9,7 +9,7 @@ type SendParams = { to: string; resetUrl: string };
  */
 export async function sendPasswordResetEmail({ to, resetUrl }: SendParams): Promise<void> {
   const text = [
-    "You (or someone) asked to set a new password for your Donut IRL account.",
+    "You (or someone) asked to set a new password for your Donut IRL account (real-money sales for Donut SMP).",
     "",
     `Open this link within 1 hour: ${resetUrl}`,
     "",

@@ -16,6 +16,13 @@ import { cn } from "@/lib/utils";
 import { ColdStartFullPage } from "@/components/layout/cold-start-full-page";
 import { MaintenanceModeFullPage } from "@/components/layout/maintenance-mode-full-page";
 import { getMaintenanceSnapshot } from "@/lib/maintenance.server";
+import {
+  COMMUNITY_NAME,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_OG_DESCRIPTION,
+  SITE_TITLE_DEFAULT,
+} from "@/lib/brand";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -34,20 +41,21 @@ const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(base),
   title: {
-    default: "Donut IRL — Sell in-game items for real money",
-    template: "%s | Donut IRL",
+    default: SITE_TITLE_DEFAULT,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Sell 1M in-game money for INR. Live tier rates, instant sell flow, and order tracking at donutirl.online.",
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Donut IRL — In-game to INR",
-    description: "Live rates, instant sell flow, and trusted payouts for sellers.",
+    title: SITE_TITLE_DEFAULT,
+    description: SITE_OG_DESCRIPTION,
     type: "website",
     locale: "en_IN",
   },
   keywords: [
-    "Donut IRL",
+    SITE_NAME,
+    COMMUNITY_NAME,
     "donutirl",
+    "Minecraft SMP",
     "buy game items",
     "sell in-game gold",
     "INR payout",

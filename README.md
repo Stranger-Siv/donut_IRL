@@ -1,6 +1,6 @@
 # Donut IRL
 
-Next.js 14 (App Router) marketplace (**Donut IRL**) for **buying in-game items from users for real money** (INR). Dark, responsive UI; MongoDB; NextAuth; role-based admin/staff/seller tools. Production domain: **donutirl.online**.
+Next.js 14 (App Router) app: **IRL (cash) trading for Donut SMP in-game money** (INR), sell flow, and admin tools. **Donut IRL** at **donutirl.online** — independent, not the server.
 
 ## Stack
 
