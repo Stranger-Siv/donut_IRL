@@ -12,6 +12,9 @@ const TIPS = [
   "Tier rates and promos can change after a deploy — the home feed will be ready when we’re up.",
 ] as const;
 
+/** How often to ask the server if maintenance ended (ms). */
+const MAINTENANCE_STATUS_POLL_MS = 60_000;
+
 let guestId: string | null = null;
 function getGuestId(): string {
   if (typeof window === "undefined") return "—";
@@ -62,6 +65,39 @@ export function MaintenanceModeFullPage({ supportUrl }: { supportUrl: string }) 
     return () => clearInterval(id);
   }, []);
 
+  /** When maintenance is turned off, reload the same path + search (keeps the page they wanted). */
+  useEffect(() => {
+    const ac = new AbortController();
+    const check = async () => {
+      try {
+        const r = await fetch("/api/maintenance/status", {
+          cache: "no-store",
+          signal: ac.signal,
+        });
+        if (!r.ok) return;
+        const j = (await r.json()) as { active?: boolean };
+        if (j?.active === false) {
+          window.location.assign(window.location.href);
+        }
+      } catch {
+        /* still on maintenance or network hiccup — try again on interval */
+      }
+    };
+    void check();
+    const timer = window.setInterval(() => {
+      void check();
+    }, MAINTENANCE_STATUS_POLL_MS);
+    const onVis = () => {
+      if (document.visibilityState === "visible") void check();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      ac.abort();
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
   const gid = getGuestId();
   const support = supportUrl?.trim() ?? "";
 
@@ -92,6 +128,10 @@ export function MaintenanceModeFullPage({ supportUrl }: { supportUrl: string }) 
         </h1>
         <p className="mt-2 max-w-md text-balance text-sm leading-relaxed text-zinc-500 sm:text-base">
           The team is working on the exchange. We&apos;ll be back shortly — thanks for your patience.
+        </p>
+        <p className="mt-2 max-w-md text-balance text-[11px] leading-relaxed text-zinc-600 sm:text-xs">
+          We check in the background every minute; when the site is open again, this page will refresh and take you
+          to the same address you were using (including the path you had open).
         </p>
 
         <div className="mt-6 w-full min-w-0 max-w-sm space-y-1.5 sm:max-w-md">
