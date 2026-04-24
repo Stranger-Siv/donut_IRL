@@ -27,7 +27,7 @@ export function MobileNav({ role }: { role?: AppRole | string }) {
     items.push({ href: "/admin", label: "Admin", icon: Shield });
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-zinc-950/95 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-zinc-950/95 p-1 pb-[max(0.25rem,env(safe-area-inset-bottom,0px))] backdrop-blur-md sm:hidden">
       <div className="mx-auto flex max-w-lg justify-around">
         {items.slice(0, 4).map(({ href, label, icon: Icon }) => {
           const active = navActive(pathname, href);

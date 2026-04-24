@@ -27,7 +27,7 @@ export async function Navbar() {
     <header
       className={cn(
         "sticky top-0 z-50 w-full border-b border-white/10",
-        "bg-zinc-950/85 backdrop-blur-sm"
+        "bg-zinc-950/85 backdrop-blur-md"
       )}
     >
       <div className="mx-auto flex h-16 min-h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
