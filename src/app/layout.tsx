@@ -5,7 +5,6 @@ import { AppProviders } from "@/components/providers/app-providers";
 import {
   ConditionalMain,
   getRequestPathname,
-  ShowUnlessAdmin,
 } from "@/components/layout/conditional-chrome";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -16,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { ColdStartFullPage } from "@/components/layout/cold-start-full-page";
 import { MaintenanceModeFullPage } from "@/components/layout/maintenance-mode-full-page";
 import { getMaintenanceSnapshot } from "@/lib/maintenance.server";
+import { ShowUnlessAdminClient } from "@/components/layout/show-unless-admin-client";
 import {
   COMMUNITY_NAME,
   SITE_DESCRIPTION,
@@ -114,16 +114,16 @@ export default async function RootLayout({
             ) : (
               <>
                 <ColdStartFullPage />
-                <ShowUnlessAdmin>
+                <ShowUnlessAdminClient>
                   <Navbar />
-                </ShowUnlessAdmin>
+                </ShowUnlessAdminClient>
                 <ConditionalMain>{children}</ConditionalMain>
-                <ShowUnlessAdmin>
+                <ShowUnlessAdminClient>
                   <Footer />
-                </ShowUnlessAdmin>
-                <ShowUnlessAdmin>
+                </ShowUnlessAdminClient>
+                <ShowUnlessAdminClient>
                   <MobileNav role={session?.user?.role} />
-                </ShowUnlessAdmin>
+                </ShowUnlessAdminClient>
               </>
             )}
           </div>
