@@ -202,7 +202,7 @@ export function AdminMobileNav({ pathname }: { pathname: string }) {
     <>
       <header
         data-admin-mobile-header
-        className="sticky top-0 z-40 flex h-14 min-h-14 w-full min-w-0 max-w-full shrink-0 items-center gap-2 overflow-x-clip border-b border-white/5 bg-zinc-950/90 px-2 backdrop-blur-xl supports-[backdrop-filter]:bg-zinc-950/80 sm:gap-3 sm:px-3 lg:hidden"
+        className="sticky top-0 z-40 flex h-14 min-h-14 w-full min-w-0 max-w-full shrink-0 items-center gap-2 overflow-x-clip border-b border-white/5 bg-zinc-950/92 px-2 backdrop-blur-sm supports-[backdrop-filter]:bg-zinc-950/88 sm:gap-3 sm:px-3 lg:hidden"
       >
         <button
           type="button"

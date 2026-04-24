@@ -17,7 +17,7 @@ body {
   overflow-x: hidden;
   overflow-x: clip;
   background-size: 100% 100%, auto;
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
 
 @layer base {

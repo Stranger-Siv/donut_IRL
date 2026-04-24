@@ -14,9 +14,9 @@ const config: Config = {
       },
       backgroundImage: {
         "grid-fade":
-          "linear-gradient(to bottom, rgba(9,9,11,0.2), rgba(9,9,11,0.95)), radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.25), transparent 70%)",
+          "linear-gradient(to bottom, rgba(9,9,11,0.12), rgba(9,9,11,0.88)), radial-gradient(ellipse 75% 45% at 50% -20%, rgba(124, 58, 237, 0.12), transparent 72%)",
         noise:
-          "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
+          "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E\")",
       },
       boxShadow: {
         card: "0 0 0 1px rgba(255,255,255,0.06), 0 20px 50px -20px rgba(0,0,0,0.5)",
