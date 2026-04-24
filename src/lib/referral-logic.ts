@@ -52,19 +52,22 @@ export async function onOrderCompleted(
   ref.progressVolumeM = (ref.progressVolumeM || 0) + equivalentVolume;
   await ref.save();
 
-  if (ref.rewardReferrerGiven || ref.status === "REWARDED") return;
+  if (ref.rewardReferrerGiven || ref.status === "COMPLETED" || ref.status === "REWARDED") return;
 
   if (ref.progressVolumeM < REFERRAL_VOLUME_THRESHOLD_M) return;
 
   ref.rewardReferrerGiven = true;
-  ref.status = "REWARDED";
+  ref.status = "COMPLETED";
+  if (!(ref as { completedAt?: Date | null }).completedAt) {
+    (ref as { completedAt?: Date | null }).completedAt = new Date();
+  }
   await ref.save();
 
-  const msg = `Referral reward: ${REFERRAL_REWARD_IG} in-game for you — your invitee reached ${REFERRAL_VOLUME_THRESHOLD_M}M+ completed volume.`;
+  const msg = `Referral goal completed: ${REFERRAL_REWARD_IG} in-game is now ready for admin payout — your invitee reached ${REFERRAL_VOLUME_THRESHOLD_M}M+ completed volume.`;
   await Notification.create({
     userId: referrer._id,
     type: "referral",
-    title: "Referral reward",
+    title: "Referral completed",
     message: msg,
   });
 }

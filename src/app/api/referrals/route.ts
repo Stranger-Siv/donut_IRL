@@ -36,7 +36,7 @@ export async function GET(req: Request) {
   });
   const asReferrerRewarded = await Referral.countDocuments({
     referrerId: u._id,
-    status: "REWARDED",
+    status: { $in: ["COMPLETED", "REWARDED"] },
   });
   const asReferred = await Referral.findOne({ referredId: u._id })
     .select("status progressVolumeM ineligibleReason ineligibleUserMessage")
@@ -95,7 +95,7 @@ export async function GET(req: Request) {
         .trim()
         .toUpperCase();
       const displayProgressM =
-        stNorm === "REWARDED"
+        stNorm === "REWARDED" || stNorm === "COMPLETED"
           ? Math.max(progressVolumeM, REFERRAL_VOLUME_THRESHOLD_M)
           : progressVolumeM;
       return {
@@ -138,7 +138,7 @@ export async function GET(req: Request) {
             (asReferred as { progressVolumeM?: number }).progressVolumeM ?? 0;
           const sNorm = normIneligibleSt(s);
           const displayProgressM =
-            sNorm === "REWARDED"
+            sNorm === "REWARDED" || sNorm === "COMPLETED"
               ? Math.max(progressVolumeM, REFERRAL_VOLUME_THRESHOLD_M)
               : progressVolumeM;
           return {

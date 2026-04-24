@@ -15,6 +15,13 @@ function isIneligibleStatus(st: string | undefined) {
     .toUpperCase() === "INELIGIBLE";
 }
 
+function isCompletedStatus(st: string | undefined) {
+  const s = String(st ?? "")
+    .trim()
+    .toUpperCase();
+  return s === "COMPLETED" || s === "REWARDED";
+}
+
 type Ref = {
   referralCode: string;
   inGameName?: string;
@@ -235,8 +242,8 @@ export function ReferralsClient() {
               <p className="mt-1 text-2xl font-semibold text-zinc-100">{ref.referredPendingCount}</p>
             </div>
             <div className="card-glow">
-              <p className="text-xs text-zinc-500">Rewards paid</p>
-              <p className="mt-0.5 text-[10px] text-zinc-600">50M+ hit &amp; processed</p>
+              <p className="text-xs text-zinc-500">Completed referrals</p>
+              <p className="mt-0.5 text-[10px] text-zinc-600">50M+ goal met</p>
               <p className="mt-1 text-2xl font-semibold text-zinc-100">{ref.referredCompletedRewards}</p>
             </div>
           </div>
@@ -412,7 +419,7 @@ export function ReferralsClient() {
                       <span
                         className={cn(
                           "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
-                          inv.status === "REWARDED" && "bg-emerald-500/15 text-emerald-200/90",
+                          isCompletedStatus(inv.status) && "bg-emerald-500/15 text-emerald-200/90",
                           inv.status === "PENDING" && "bg-zinc-800 text-zinc-400",
                           isIneligibleStatus(inv.status) && "bg-amber-500/10 text-amber-200/80"
                         )}
@@ -448,7 +455,7 @@ export function ReferralsClient() {
                       <span className="font-mono text-zinc-300">
                         {formatM(inv.displayProgressM ?? inv.progressVolumeM)}M /{" "}
                         {REFERRAL_VOLUME_THRESHOLD_M}M
-                        {String(inv.status).toUpperCase() === "REWARDED" && (
+                        {isCompletedStatus(inv.status) && (
                           <span className="ml-1 font-sans text-[10px] font-normal text-emerald-500/90">
                             (goal met)
                           </span>

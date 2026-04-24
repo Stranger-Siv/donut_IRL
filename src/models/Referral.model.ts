@@ -5,7 +5,11 @@ const referralSchema = new Schema(
     referrerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     referredId: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true },
     code: { type: String, required: true, uppercase: true },
-    status: { type: String, enum: ["PENDING", "REWARDED", "INELIGIBLE"], default: "PENDING" },
+    status: {
+      type: String,
+      enum: ["PENDING", "COMPLETED", "REWARDED", "INELIGIBLE"],
+      default: "PENDING",
+    },
     /**
      * Why `INELIGIBLE` was set (e.g. SAME_IP_AS_REFERRER, ADMIN). See `referral-ineligible.ts`.
      * Optional; legacy rows may be empty.
@@ -24,6 +28,8 @@ const referralSchema = new Schema(
      * (separate from approving the reward in the main table).
      */
     referrerPayoutDeliveredAt: { type: Date, default: null },
+    /** When invitee first met the referral goal and row entered COMPLETED state. */
+    completedAt: { type: Date, default: null },
     rewardMillionIg: { type: String, default: "5" },
     referredIp: { type: String, default: "" },
     adminNote: { type: String, default: "" },

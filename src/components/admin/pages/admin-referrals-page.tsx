@@ -17,6 +17,7 @@ type Item = {
   referrerInGameName?: string;
   referredInGameName?: string;
   referrerPayoutDeliveredAt?: string | null;
+  completedAt?: string | null;
   ineligibleReason?: string;
   ineligibleUserMessage?: string;
   adminNote?: string;
@@ -27,6 +28,13 @@ export function AdminReferralsPage() {
     summary: object;
     items: Item[];
     payoutsPending: Item[];
+    completedTodayByReferrer?: {
+      referrerId: string;
+      referrerEmail: string;
+      referrerInGameName: string;
+      completedCount: number;
+      referredUsers: string[];
+    }[];
   } | null>(null);
   const [markIneligibleId, setMarkIneligibleId] = useState<string | null>(null);
   const [publicIneligible, setPublicIneligible] = useState("");
@@ -77,7 +85,7 @@ export function AdminReferralsPage() {
   const statItems = s
     ? [
         { label: "Total", value: String(s.total ?? 0) },
-        { label: "Rewarded", value: String(s.successful ?? 0) },
+        { label: "Completed", value: String(s.successful ?? 0) },
         { label: "Pending", value: String(s.pending ?? 0) },
       ]
     : [];
@@ -93,6 +101,42 @@ export function AdminReferralsPage() {
       </div>
 
       {data && (
+        <div className="mb-6 rounded-xl border border-cyan-500/25 bg-cyan-500/5 p-4">
+          <h2 className="text-sm font-semibold text-cyan-100/95">Completed referrals today</h2>
+          <p className="mt-1 text-xs text-zinc-500">
+            Use this list to manually payout referrers. It groups today&apos;s newly completed referrals by
+            referrer with referred usernames and count.
+          </p>
+          {(data.completedTodayByReferrer?.length ?? 0) === 0 ? (
+            <p className="mt-3 text-sm text-zinc-600">No referrals completed today yet.</p>
+          ) : (
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full min-w-[700px] text-left text-xs sm:text-sm">
+                <thead className="text-[11px] uppercase text-zinc-500">
+                  <tr>
+                    <th className="p-2">Referrer</th>
+                    <th className="p-2">Referrer IGN</th>
+                    <th className="p-2">Completed count</th>
+                    <th className="p-2">Referred users</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.completedTodayByReferrer?.map((r) => (
+                    <tr key={r.referrerId} className="border-t border-white/10 text-zinc-300">
+                      <td className="p-2">{r.referrerEmail}</td>
+                      <td className="p-2 font-mono text-zinc-400">{r.referrerInGameName}</td>
+                      <td className="p-2 font-semibold text-cyan-200">{r.completedCount}</td>
+                      <td className="p-2 text-zinc-400">{r.referredUsers.join(", ")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {data && (
         <div className="mb-6 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4">
           <h2 className="text-sm font-semibold text-emerald-100/95">Referral payouts (in-game)</h2>
           <p className="mt-1 text-xs leading-relaxed text-zinc-500">
@@ -103,14 +147,14 @@ export function AdminReferralsPage() {
             save it on Referrals before paying.
           </p>
           <p className="mt-2 text-xs text-zinc-500">
-            <strong className="text-zinc-400">How to pay:</strong> Rows here are <strong className="text-zinc-400">REWARDED</strong>{" "}
+            <strong className="text-zinc-400">How to pay:</strong> Rows here are <strong className="text-zinc-400">COMPLETED</strong>{" "}
             (50M+ met and approved) but <strong className="text-zinc-400">not</strong> yet marked paid in-game. Send the{" "}
             <strong className="text-zinc-400">M</strong> amount in-game to the <strong className="text-zinc-400">referrer</strong>{" "}
             (not the referred user), then click <strong className="text-zinc-400">Mark paid in-game</strong>.
           </p>
           {(data.payoutsPending?.length ?? 0) === 0 ? (
             <p className="mt-3 text-sm text-zinc-600">
-              No pending in-game payouts — either nothing is REWARDED yet, or everything is already marked paid.
+              No pending in-game payouts — either nothing is COMPLETED yet, or everything is already marked paid.
             </p>
           ) : (
             <div className="mt-3 w-full min-w-0 max-w-full overflow-x-hidden">
@@ -272,11 +316,11 @@ export function AdminReferralsPage() {
                   )}
                 </td>
                 <td className="min-w-0 p-1.5 text-[9px] text-zinc-500 sm:p-2 sm:text-[10px]">
-                  {r.status === "REWARDED" && r.referrerPayoutDeliveredAt ? (
+                  {["COMPLETED", "REWARDED"].includes(String(r.status)) && r.referrerPayoutDeliveredAt ? (
                     <span className="text-emerald-500/90" title={r.referrerPayoutDeliveredAt}>
                       Paid
                     </span>
-                  ) : r.status === "REWARDED" ? (
+                  ) : ["COMPLETED", "REWARDED"].includes(String(r.status)) ? (
                     <span className="text-amber-500/80">Pend</span>
                   ) : (
                     "—"
@@ -289,7 +333,7 @@ export function AdminReferralsPage() {
                       className="text-[10px] text-emerald-400"
                       onClick={() => void act(r._id, "approve_reward")}
                     >
-                      Approve
+                      Mark completed
                     </button>
                     <button
                       type="button"

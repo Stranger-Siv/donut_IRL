@@ -50,7 +50,7 @@ export async function GET(req: Request) {
   const umap = new Map(users.map((u) => [u._id.toString(), u] as const));
 
   const total = rows.length;
-  const successful = rows.filter((r) => r.status === "REWARDED").length;
+  const successful = rows.filter((r) => ["COMPLETED", "REWARDED"].includes(String(r.status))).length;
   const pending = rows.filter((r) => r.status === "PENDING").length;
   const abuseFlags = rows.filter(
     (r) => (r as { adminNote?: string }).adminNote?.includes("abuse")
@@ -79,18 +79,65 @@ export async function GET(req: Request) {
       referrerInGameName: (refUser as { inGameName?: string } | undefined)?.inGameName?.trim() || "",
       referredInGameName: (refdUser as { inGameName?: string } | undefined)?.inGameName?.trim() || "",
       referrerPayoutDeliveredAt: payoutAt ? new Date(payoutAt).toISOString() : null,
+      completedAt: (() => {
+        const c = (r as { completedAt?: Date | null }).completedAt;
+        return c ? new Date(c).toISOString() : null;
+      })(),
     };
   };
 
   const items = rows.map(mapRow);
   const payoutsPending = items.filter(
-    (it) => it.status === "REWARDED" && !it.referrerPayoutDeliveredAt
+    (it) => ["COMPLETED", "REWARDED"].includes(String(it.status)) && !it.referrerPayoutDeliveredAt
   );
+
+  const now = new Date();
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(now);
+  endOfDay.setHours(23, 59, 59, 999);
+  const completedTodayRows = items.filter((it) => {
+    if (!["COMPLETED", "REWARDED"].includes(String(it.status))) return false;
+    if (!it.completedAt) return false;
+    const t = new Date(it.completedAt).getTime();
+    return t >= startOfDay.getTime() && t <= endOfDay.getTime();
+  });
+  const byReferrer = new Map<
+    string,
+    { referrerEmail?: string; referrerInGameName?: string; count: number; referredUsers: string[] }
+  >();
+  for (const row of completedTodayRows) {
+    const key = row.referrerId;
+    const cur:
+      | { referrerEmail?: string; referrerInGameName?: string; count: number; referredUsers: string[] }
+      | undefined = byReferrer.get(key);
+    const next = cur ?? {
+      referrerEmail: row.referrerEmail,
+      referrerInGameName: row.referrerInGameName,
+      count: 0,
+      referredUsers: [] as string[],
+    };
+    next.count += 1;
+    next.referredUsers.push(
+      row.referredInGameName?.trim() || row.referredEmail?.trim() || "Unknown user"
+    );
+    byReferrer.set(key, next);
+  }
+  const completedTodayByReferrer = Array.from(byReferrer.entries())
+    .map(([referrerId, v]) => ({
+      referrerId,
+      referrerEmail: v.referrerEmail || "—",
+      referrerInGameName: v.referrerInGameName?.trim() || "—",
+      completedCount: v.count,
+      referredUsers: Array.from(new Set(v.referredUsers)),
+    }))
+    .sort((a, b) => b.completedCount - a.completedCount);
 
   return NextResponse.json({
     summary: { total, successful, pending, abuseFlags },
     items,
     payoutsPending,
+    completedTodayByReferrer,
   });
 }
 
@@ -117,9 +164,12 @@ export async function PATCH(req: Request) {
   if (adminNote !== undefined) ref.adminNote = adminNote;
   if (rewardMillionIg) ref.rewardMillionIg = rewardMillionIg;
 
-  if (action === "mark_referrer_payout_delivered" && ref.status !== "REWARDED") {
+  if (
+    action === "mark_referrer_payout_delivered" &&
+    !["COMPLETED", "REWARDED"].includes(String(ref.status))
+  ) {
     return NextResponse.json(
-      { error: "Payout can only be marked for REWARDED referrals" },
+      { error: "Payout can only be marked for COMPLETED referrals" },
       { status: 400 }
     );
   }
@@ -129,11 +179,14 @@ export async function PATCH(req: Request) {
 
   switch (action) {
     case "approve_reward": {
-      ref.status = "REWARDED";
+      ref.status = "COMPLETED";
       ref.rewardReferrerGiven = true;
       const cur = ref.progressVolumeM || 0;
       if (cur < REFERRAL_VOLUME_THRESHOLD_M) {
         ref.progressVolumeM = REFERRAL_VOLUME_THRESHOLD_M;
+      }
+      if (!(ref as { completedAt?: Date | null }).completedAt) {
+        (ref as { completedAt?: Date | null }).completedAt = new Date();
       }
       break;
     }
