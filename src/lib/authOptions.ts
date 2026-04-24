@@ -8,6 +8,26 @@ import { isMongoConnectionError } from "./db-errors";
 import { higherSellerTier, normalizeSellerTier, sellerTierFromVolumeM } from "./tier";
 import { verifyTotpCode } from "./totp-donut";
 
+/**
+ * One stable secret for signing/encrypting JWT sessions. In production it must be set in
+ * the host environment (e.g. `openssl rand -base64 32`) and kept the same on every instance
+ * and every deploy, or you get JWT_SESSION_ERROR / "decryption operation failed".
+ * After rotating the secret, users with old cookies must sign in again (or clear site data).
+ */
+function getNextAuthSecret(): string {
+  if (process.env.NODE_ENV === "production") {
+    const s = process.env.NEXTAUTH_SECRET;
+    if (!s || s.length < 32) {
+      throw new Error(
+        "NEXTAUTH_SECRET is required in production: set a stable random value of at least 32 characters in your host (e.g. openssl rand -base64 32). " +
+          "It must be identical for every deploy and every replica. If the secret changed, existing session cookies will fail to decrypt (JWT_SESSION_ERROR) until users sign in again."
+      );
+    }
+    return s;
+  }
+  return process.env.NEXTAUTH_SECRET || "dev-only-nextauth-secret-do-not-use-in-production-32bytes-min";
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -95,5 +115,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getNextAuthSecret(),
 };

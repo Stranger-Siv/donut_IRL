@@ -115,6 +115,8 @@ This app is a standard **Next.js 14** Node server (`next start`). Vercel detects
 5. **First deploy** → Redeploy after changing env vars if the first build ran without them.
 6. **Smoke test:** open `/`, `/login`, and an authenticated route; confirm `NEXTAUTH_URL` matches the browser’s origin or cookie/session issues may appear.
 
+**If logs show `JWT_SESSION_ERROR` / “decryption operation failed”:** the session cookie was encrypted with a different `NEXTAUTH_SECRET` than the server is using. Fix: set **one** long random `NEXTAUTH_SECRET` in the host (e.g. `openssl rand -base64 32`), **the same** for every deploy and every process; redeploy. Use **one** public URL in `NEXTAUTH_URL` and browse only that (avoid logging in on `*.onrender.com` and the custom domain with one account — pick one). After changing the secret, have users sign in again (or clear site data for your domain) so old cookies are replaced.
+
 **CLI (optional):** With [Vercel CLI](https://vercel.com/docs/cli) installed and logged in:
 
 ```bash
