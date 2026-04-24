@@ -1,10 +1,8 @@
-import { randomBytes } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { getSessionUser } from "@/lib/api-auth";
 import { Order } from "@/models/Order.model";
+import { OrderMessageAttachment } from "@/models/OrderMessageAttachment.model";
 import { canReadOrder, canPostOrderMessage } from "@/lib/order-guards";
 import {
   extFromImageMime,
@@ -75,13 +73,15 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const name = `${Date.now()}-${randomBytes(8).toString("hex")}.${ext}`;
-  const relDir = path.join("public", "uploads", "order-messages", orderId);
-  const absDir = path.join(process.cwd(), relDir);
-  await mkdir(absDir, { recursive: true });
-  const absPath = path.join(absDir, name);
-  await writeFile(absPath, Buffer.from(ab));
+  void ext;
+  const doc = await OrderMessageAttachment.create({
+    orderId: o._id,
+    uploadedBy: s.id,
+    contentType: f.type,
+    sizeBytes: ab.byteLength,
+    data: Buffer.from(ab),
+  });
 
-  const publicPath = `/uploads/order-messages/${orderId}/${name}`;
-  return NextResponse.json({ url: publicPath, size: ab.byteLength });
+  const apiPath = `/api/orders/${orderId}/messages/attachment/${doc._id.toString()}`;
+  return NextResponse.json({ url: apiPath, size: ab.byteLength });
 }

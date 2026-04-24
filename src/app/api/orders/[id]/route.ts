@@ -77,11 +77,14 @@ export async function GET(
   const base = toOrderResponse(o);
   const settings = await getOrCreateAppSettings();
   const b = toBusinessBlock(settings);
-  const queuePosition = await getQueuePositionForOrder({
-    _id: o._id,
-    createdAt: o.createdAt!,
-    status: o.status,
-  });
+  const queuePosition =
+    o.status === "PENDING"
+      ? await getQueuePositionForOrder({
+          _id: o._id,
+          createdAt: o.createdAt!,
+          status: o.status,
+        })
+      : null;
   const isBusinessOpen = isWithinBusinessHours(b);
   return NextResponse.json({
     ...base,

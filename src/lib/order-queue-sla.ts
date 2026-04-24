@@ -97,11 +97,12 @@ export function estimateProcessingCopy(
   queuePosition: number | null,
   open: boolean
 ): string {
+  void settings;
   void open;
-  const sla = Math.max(1, settings.defaultSlaHours ?? 24);
-  const pos = queuePosition != null && queuePosition > 0 ? `Queue position: ~${queuePosition}. ` : "";
-  const hours = `Typical processing target: within about ${sla} hours once assigned.`;
-  return `${pos}${hours}`;
+  if (queuePosition != null && queuePosition > 0) {
+    return `Queue: ${queuePosition}`;
+  }
+  return "";
 }
 
 /**

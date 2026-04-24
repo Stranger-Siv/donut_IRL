@@ -12,6 +12,9 @@ export const attachmentUrlSchema = z
           s
         );
       }
+      if (s.startsWith("/api/orders/")) {
+        return /^\/api\/orders\/[a-f\d]{24}\/messages\/attachment\/[a-f\d]{24}$/i.test(s);
+      }
       try {
         const u = new URL(s);
         return u.protocol === "https:" || u.protocol === "http:";
