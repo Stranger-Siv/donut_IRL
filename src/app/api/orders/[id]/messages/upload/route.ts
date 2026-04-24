@@ -61,7 +61,7 @@ export async function POST(
   const ext = extFromImageMime(f.type);
   if (!ext) {
     return NextResponse.json(
-      { error: "Use JPEG, PNG, GIF, or WebP" },
+      { error: "Use JPEG, PNG, GIF, WebP, HEIC, or HEIF" },
       { status: 400 }
     );
   }

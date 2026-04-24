@@ -388,7 +388,7 @@ export function OrderTrackClient({
             </button>
           </div>
           <div className="space-y-2 border-t border-white/5 pt-3">
-            <p className="text-xs text-zinc-500">Public note to seller (dispute / under review)</p>
+            <p className="text-xs text-zinc-500">Public note to seller (use Discord for disputes)</p>
             <textarea
               className="w-full min-w-0 rounded-md border border-white/10 bg-zinc-950/80 px-2 py-2 text-base sm:text-sm"
               rows={2}

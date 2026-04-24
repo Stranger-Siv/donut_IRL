@@ -8,7 +8,7 @@ export const attachmentUrlSchema = z
     (s) => {
       if (s.includes("..")) return false;
       if (s.startsWith("/uploads/order-messages/")) {
-        return /^\/uploads\/order-messages\/[a-f\d]{24}\/[^/[\]]+\.(jpe?g|png|gif|webp)$/i.test(
+        return /^\/uploads\/order-messages\/[a-f\d]{24}\/[^/[\]]+\.(jpe?g|png|gif|webp|heic|heif)$/i.test(
           s
         );
       }
@@ -29,6 +29,8 @@ const imageMimeToExt: Record<string, string> = {
   "image/png": "png",
   "image/gif": "gif",
   "image/webp": "webp",
+  "image/heic": "heic",
+  "image/heif": "heif",
 };
 
 export function extFromImageMime(mime: string): string | null {
@@ -39,8 +41,8 @@ export function isLikelyImageAttachmentUrl(u: string): boolean {
   if (u.startsWith("/uploads/order-messages/")) return true;
   try {
     const p = new URL(u).pathname;
-    return /\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(p);
+    return /\.(jpe?g|png|gif|webp|avif|heic|heif)(\?|$)/i.test(p);
   } catch {
-    return /\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(u);
+    return /\.(jpe?g|png|gif|webp|avif|heic|heif)(\?|$)/i.test(u);
   }
 }

@@ -335,8 +335,8 @@ export function OrderThread({
           </div>
         </div>
         <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-zinc-500">
-          Chat with your middleman. Use the image button to upload (JPEG, PNG, GIF, WebP — max 5 per
-          message) or paste https:// links in the text box.
+          Chat with your middleman. Use the image button to upload (JPEG, PNG, GIF, WebP, HEIC — max 5
+          per message) or paste https:// links in the text box.
         </p>
       </div>
 
@@ -521,7 +521,7 @@ export function OrderThread({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/gif,image/webp"
+            accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif"
             multiple
             className="sr-only"
             onChange={(e) => {
