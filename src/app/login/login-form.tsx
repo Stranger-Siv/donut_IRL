@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ClipboardPaste, Lock } from "lucide-react";
 
 function Inner() {
   const searchParams = useSearchParams();
@@ -13,7 +14,23 @@ function Inner() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const codeInputRef = useRef<HTMLInputElement>(null);
   const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+
+  async function pasteAuthCode() {
+    try {
+      const text = await navigator.clipboard.readText();
+      const digits = text.replace(/[^\d]/g, "");
+      if (!digits) {
+        toast.error("No digits in clipboard — copy the 6-digit code from your authenticator");
+        return;
+      }
+      setCode(digits.slice(0, 8));
+      codeInputRef.current?.focus();
+    } catch {
+      toast.error("Could not read clipboard — paste with the keyboard (Ctrl+V / ⌘V)");
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,30 +73,49 @@ function Inner() {
         <label className="text-xs text-zinc-500" htmlFor="password">
           Password
         </label>
-        <input
-          id="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          className="input-field"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Lock
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+            aria-hidden
+          />
+          <input
+            id="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            className="input-field pl-10"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
       </div>
       <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="totp">
           Authenticator code (6 digits, admins with 2FA)
         </label>
-        <input
-          id="totp"
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          placeholder="Only if 2FA is enabled"
-          className="input-field"
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/[^\d\s]/g, ""))}
-        />
+        <div className="flex gap-2">
+          <input
+            ref={codeInputRef}
+            id="totp"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            placeholder="Only if 2FA is enabled"
+            className="input-field min-w-0 flex-1"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/[^\d\s]/g, ""))}
+          />
+          <button
+            type="button"
+            onClick={pasteAuthCode}
+            className="focus-brand flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-zinc-900/60 px-3 py-2.5 text-sm text-zinc-200 transition hover:bg-white/5 min-[380px]:px-3.5"
+            title="Paste code from clipboard"
+            aria-label="Paste authenticator code from clipboard"
+          >
+            <ClipboardPaste className="h-4 w-4 shrink-0 text-zinc-400" aria-hidden />
+            <span className="hidden min-[420px]:inline">Paste</span>
+          </button>
+        </div>
       </div>
       <div className="text-right text-sm">
         <Link href="/forgot-password" className="text-violet-400 hover:underline">

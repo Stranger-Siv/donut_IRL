@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
+import { Eye, EyeOff, Lock } from "lucide-react";
 
 function Inner({
   initialRefCode,
@@ -18,6 +19,8 @@ function Inner({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [referral, setReferral] = useState(
     () => searchParams?.get("ref") || ""
   );
@@ -26,21 +29,21 @@ function Inner({
     () => initialReferrerName
   );
 
-  const refParam = (searchParams?.get("ref") || "").trim().toUpperCase();
   const initialCodeNorm = (initialRefCode || "").toUpperCase();
+  const referralCodeNorm = referral.trim().toUpperCase();
 
   useEffect(() => {
-    if (!refParam) {
+    if (!referralCodeNorm) {
       setReferrerName(null);
       return;
     }
-    if (refParam === initialCodeNorm && initialReferrerName != null) {
+    if (referralCodeNorm === initialCodeNorm && initialReferrerName != null) {
       setReferrerName(initialReferrerName);
       return;
     }
     let cancelled = false;
     void fetch(
-      `/api/referrals/resolve?code=${encodeURIComponent(refParam)}`
+      `/api/referrals/resolve?code=${encodeURIComponent(referralCodeNorm)}`
     )
       .then((r) => r.json() as Promise<{ referrerName: string | null }>)
       .then((d) => {
@@ -49,10 +52,14 @@ function Inner({
     return () => {
       cancelled = true;
     };
-  }, [refParam, initialCodeNorm, initialReferrerName]);
+  }, [referralCodeNorm, initialCodeNorm, initialReferrerName]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
     setLoading(true);
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -87,7 +94,7 @@ function Inner({
 
   return (
     <form onSubmit={onSubmit} className="card-glow space-y-4 sm:space-y-5">
-      {refParam && referrerName && (
+      {referralCodeNorm && referrerName && (
         <p
           className="rounded-lg border border-violet-500/30 bg-violet-950/50 px-3 py-2 text-sm text-violet-100"
           role="status"
@@ -96,7 +103,7 @@ function Inner({
           <span className="font-semibold text-zinc-50">{referrerName}</span>
         </p>
       )}
-      {refParam && !referrerName && (
+      {referralCodeNorm && !referrerName && (
         <p
           className="rounded-lg border border-amber-500/20 bg-amber-950/30 px-3 py-2 text-sm text-amber-200/90"
           role="status"
@@ -135,15 +142,54 @@ function Inner({
         <label className="text-xs text-zinc-500" htmlFor="reg-pw">
           Password
         </label>
-        <input
-          id="reg-pw"
-          type="password"
-          required
-          minLength={8}
-          className="input-field"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Lock
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+            aria-hidden
+          />
+          <input
+            id="reg-pw"
+            type={showPassword ? "text" : "password"}
+            required
+            minLength={8}
+            className="input-field pl-10 pr-10"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="focus-brand absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded text-zinc-400 hover:text-zinc-200"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            title={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" aria-hidden />
+            ) : (
+              <Eye className="h-4 w-4" aria-hidden />
+            )}
+          </button>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <label className="text-xs text-zinc-500" htmlFor="reg-confirm-pw">
+          Confirm password
+        </label>
+        <div className="relative">
+          <Lock
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+            aria-hidden
+          />
+          <input
+            id="reg-confirm-pw"
+            type={showPassword ? "text" : "password"}
+            required
+            minLength={8}
+            className="input-field pl-10"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
       </div>
       <div className="space-y-1.5">
         <label className="text-xs text-zinc-500" htmlFor="ref">
@@ -156,6 +202,11 @@ function Inner({
           value={referral}
           onChange={(e) => setReferral(e.target.value.toUpperCase())}
         />
+        {referralCodeNorm && referrerName && (
+          <p className="text-xs text-zinc-400" role="status">
+            Referred by <span className="font-medium text-zinc-200">{referrerName}</span>
+          </p>
+        )}
       </div>
       <button type="submit" disabled={loading} className="btn-primary disabled:cursor-not-allowed">
         {loading ? "…" : "Create account"}
